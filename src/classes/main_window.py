@@ -4,6 +4,8 @@ from kivy.uix.spinner import Spinner
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.graphics import Rectangle, Color, RoundedRectangle
+from database import Database
+from qr_code import scan_qr_code
 
 
 class MainWindow(App):
@@ -24,6 +26,17 @@ class MainWindow(App):
 
         return main_layout
 
+    def clock_in(self):
+
+        employee = scan_qr_code()
+
+        database = Database()
+        database.clock_in(self.location_spinner.text, employee['ID'])
+
+        message = f'{employee['Name']} has just clocked in'
+
+        self.message_label.text = message
+
     def create_details_container(self):
         container = BoxLayout(orientation='vertical')
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
@@ -42,9 +55,9 @@ class MainWindow(App):
         container.bind(size=self.update_location_bg,
                        pos=self.update_location_bg)
 
-        location_spinner = Spinner(values=['Mill Bank', 'Moss Fold'])
-        location_spinner.text = 'Select a location'
-        container.add_widget(location_spinner)
+        self.location_spinner = Spinner(values=['Mill Bank', 'Moss Fold'])
+        self.location_spinner.text = 'Select a location'
+        container.add_widget(self.location_spinner)
 
         return container
 
@@ -56,6 +69,7 @@ class MainWindow(App):
         clock_in_button = Button(text='Clock-in')
         clock_in_button.background_normal = ''
         clock_in_button.background_color = (56/255, 161/255, 24/255)
+        clock_in_button.on_press = self.clock_in
         clock_out_button = Button(text='Clock-out')
         clock_out_button.background_normal = ''
         clock_out_button.background_color = (158/255, 28/255, 25/255)
@@ -70,8 +84,8 @@ class MainWindow(App):
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
         container.bind(size=self.update_message_bg, pos=self.update_message_bg)
 
-        message_label = Label(text='Idle', color=(0, 0, 0, 1))
-        container.add_widget(message_label)
+        self.message_label = Label(text='Idle', color=(0, 0, 0, 1))
+        container.add_widget(self.message_label)
 
         return container
 

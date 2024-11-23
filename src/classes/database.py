@@ -67,11 +67,11 @@ class Database:
         sql_query = """
         SELECT clocked_in
         FROM employees
-        WHERE id = %s
+        WHERE id = ?
         """
 
         try:
-            self.cursor.execute(sql_query)
+            self.cursor.execute(sql_query, employee_id)
             field = self.cursor.fetchone()
 
             if field == 'True':
@@ -88,20 +88,21 @@ class Database:
             sql_query = """
             UPDATE employees
             SET clocked_in = 'True',
-                location = %s
-            WHERE is = %s
+                location = ?
+            WHERE id = ?
             """
 
             try:
-                self.cursor.execute(sql_query)
+                self.cursor.execute(sql_query, (location, employee_id))
                 self.conn.commit()
 
-                self.close_db_connection()
-
                 print('Record updated sucessfully.')
+
+                self.close_db_connection()
             except Exception as e:
                 print('Error updating record.', e)
 
 
-Database().connect_to_db()
-Database().close_db_connecton()
+database = Database()
+
+print(database.check_clocked_in('1'))
