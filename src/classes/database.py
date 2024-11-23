@@ -101,8 +101,3 @@ class Database:
                 self.close_db_connection()
             except Exception as e:
                 print('Error updating record.', e)
-
-
-database = Database()
-
-print(database.check_clocked_in('1'))

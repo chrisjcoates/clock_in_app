@@ -4,8 +4,8 @@ from kivy.uix.spinner import Spinner
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.graphics import Rectangle, Color, RoundedRectangle
-from database import Database
-from qr_code import scan_qr_code
+from classes.database import Database
+from classes.qr_code import scan_qr_code
 
 
 class MainWindow(App):
@@ -121,7 +121,3 @@ class MainWindow(App):
     def update_message_bg(self, instance, value):
         instance.bg.size = instance.size
         instance.bg.pos = instance.pos
-
-
-window = MainWindow()
-window.run()
