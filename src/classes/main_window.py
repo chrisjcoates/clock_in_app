@@ -51,7 +51,7 @@ class MainWindow(App):
             if employee != None:
 
                 database = Database()
-                if not database.check_clocked_in(employee['ID']):
+                if database.check_clocked_in(employee['ID']):
                     database.clock_in(
                         self.location_spinner.text, employee['ID'])
 
@@ -70,10 +70,10 @@ class MainWindow(App):
                 self.location_spinner.text = 'Select a location'
 
                 self.employees_on_site()
-            else:
-                self.message_label.text = 'Please slect a location to clock in.'
+        else:
+            self.message_label.text = 'Please select a location to clock in.'
 
-                Clock.schedule_once(self.clear_message, 7)
+            Clock.schedule_once(self.clear_message, 7)
 
     def clock_out(self):
 
