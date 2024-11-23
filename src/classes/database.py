@@ -62,8 +62,6 @@ class Database:
 
         self.connect_to_db()
 
-        self.clocked_in = False
-
         sql_query = """
         SELECT clocked_in
         FROM employees
@@ -71,15 +69,18 @@ class Database:
         """
 
         try:
-            self.cursor.execute(sql_query, employee_id)
+            self.cursor.execute(sql_query, (employee_id,))
             field = self.cursor.fetchone()
 
-            if field == 'True':
-                self.clocked_in = True
+            if field[0] == 'True':
+                clocked_in = True
+                print('Employee is clocked in.')
+            else:
+                clocked_in = False
         except Exception as e:
             print('Failed to query the database.', e)
 
-        return self.clocked_in
+        return clocked_in
 
     def clock_in(self, location, employee_id):
         if not self.check_clocked_in(employee_id):
@@ -96,8 +97,33 @@ class Database:
                 self.cursor.execute(sql_query, (location, employee_id))
                 self.conn.commit()
 
-                print('Record updated sucessfully.')
+                print('Record updated sucessfully, employee clocked in.')
 
                 self.close_db_connection()
             except Exception as e:
                 print('Error updating record.', e)
+
+    def clock_out(self, employee_id):
+        if self.check_clocked_in(employee_id):
+            self.connect_to_db()
+
+            sql_query = """
+            UPDATE employees
+            SET clocked_in = 'False',
+                location = ''
+            WHERE id = ?
+            """
+
+            try:
+                self.cursor.execute(sql_query, employee_id)
+                self.conn.commit()
+
+                print('Record updated sucessfully, employee clocked out.')
+
+                self.close_db_connection()
+            except Exception as e:
+                print('Error updating record.', e)
+
+
+database = Database()
+print(database.check_clocked_in('1'))

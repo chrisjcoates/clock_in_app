@@ -3,6 +3,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.spinner import Spinner
 from kivy.uix.label import Label
 from kivy.uix.button import Button
+from kivy.clock import Clock
 from kivy.graphics import Rectangle, Color, RoundedRectangle
 from classes.database import Database
 from classes.qr_code import scan_qr_code
@@ -10,6 +11,8 @@ from classes.qr_code import scan_qr_code
 
 class MainWindow(App):
     def build(self):
+
+        self.title = "Pendle Doors Clock-in System"
 
         # Set main layout of window
         main_layout = BoxLayout(orientation='vertical',
@@ -31,11 +34,40 @@ class MainWindow(App):
         employee = scan_qr_code()
 
         database = Database()
-        database.clock_in(self.location_spinner.text, employee['ID'])
+        if not database.check_clocked_in(employee['ID']):
+            database.clock_in(self.location_spinner.text, employee['ID'])
 
-        message = f'{employee['Name']} has just clocked in'
+            message = f'{employee['Name']} has just clocked in'
 
-        self.message_label.text = message
+            self.message_label.text = message
+
+            Clock.schedule_once(self.clear_message, 7)
+        else:
+            message = f'{employee['Name']} is already Clocked in.'
+
+            self.message_label.text = message
+
+            Clock.schedule_once(self.clear_message, 7)
+
+    def clock_out(self):
+
+        employee = scan_qr_code()
+
+        database = Database()
+        if database.check_clocked_in(employee['ID']):
+            database.clock_out(employee['ID'])
+
+            message = f'{employee['Name']} has just clocked out'
+
+            self.message_label.text = message
+
+            Clock.schedule_once(self.clear_message, 7)
+        else:
+            message = f'{employee['Name']} is already clocked out'
+
+            self.message_label.text = message
+
+            Clock.schedule_once(self.clear_message, 7)
 
     def create_details_container(self):
         container = BoxLayout(orientation='vertical')
@@ -73,6 +105,7 @@ class MainWindow(App):
         clock_out_button = Button(text='Clock-out')
         clock_out_button.background_normal = ''
         clock_out_button.background_color = (158/255, 28/255, 25/255)
+        clock_out_button.on_press = self.clock_out
 
         container.add_widget(clock_in_button)
         container.add_widget(clock_out_button)
@@ -121,3 +154,6 @@ class MainWindow(App):
     def update_message_bg(self, instance, value):
         instance.bg.size = instance.size
         instance.bg.pos = instance.pos
+
+    def clear_message(self, dt):
+        self.message_label.text = ''
