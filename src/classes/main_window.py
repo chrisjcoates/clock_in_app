@@ -29,6 +29,11 @@ class MainWindow(App):
 
         return main_layout
 
+    def employees_on_site(self):
+
+        self.mill_bank_on_site = 0
+        self.moss_fold_on_site = 0
+
     def clock_in(self):
 
         employee = scan_qr_code()
@@ -74,7 +79,9 @@ class MainWindow(App):
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
         container.bind(size=self.update_details_bg, pos=self.update_details_bg)
 
-        details_label = Label(text='Company: Pendle Doors', color=(0, 0, 0, 1))
+        details_text = 'Company: Pendle Doors'
+
+        details_label = Label(text=details_text, color=(0, 0, 0, 1))
         container.add_widget(details_label)
 
         return container

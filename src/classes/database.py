@@ -124,6 +124,31 @@ class Database:
             except Exception as e:
                 print('Error updating record.', e)
 
+    def count_employess_on_site(self):
+
+        employees_onsite = {
+            'Mill Bank': 0,
+            'Moss Fold': 0
+        }
+
+        self.connect_to_db()
+
+        sql_query = """
+        SELECT * FROM employees
+        """
+        self.cursor.execute(sql_query)
+        data = self.cursor.fetchall()
+
+        for row in data:
+            if row[3] == 'Mill Bank':
+                employees_onsite['Mill Bank'] += 1
+            elif row[3] == 'Moss Fold':
+                employees_onsite['Moss Fold'] += 1
+            else:
+                pass
+
+        return employees_onsite
+
 
 database = Database()
-print(database.check_clocked_in('1'))
+print(database.count_employess_on_site())
