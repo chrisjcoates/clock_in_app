@@ -22,6 +22,7 @@ class MainWindow(App):
 
         # Add containers to main layout
         main_layout.add_widget(self.create_details_container())
+        self.employees_on_site()
         main_layout.add_widget(self.create_location_container())
         main_layout.add_widget(BoxLayout(size_hint=(1, None), height=150))
         main_layout.add_widget(self.create_button_container())
@@ -31,48 +32,73 @@ class MainWindow(App):
 
     def employees_on_site(self):
 
-        self.mill_bank_on_site = 0
-        self.moss_fold_on_site = 0
+        database = Database()
+        employees_onsite = database.count_employess_on_site()
+
+        self.mill_bank_on_site = employees_onsite['Mill Bank']
+        self.moss_fold_on_site = employees_onsite['Moss Fold']
+
+        details_text = f"""Company: Pendle Doors\n\nMill Bank employees on site: {
+            self.mill_bank_on_site}\nMoss Fold employees on site: {self.moss_fold_on_site}"""
+
+        self.details_label.text = details_text
 
     def clock_in(self):
 
-        employee = scan_qr_code()
+        if self.location_spinner.text != 'Select a location':
+            employee = scan_qr_code()
 
-        database = Database()
-        if not database.check_clocked_in(employee['ID']):
-            database.clock_in(self.location_spinner.text, employee['ID'])
+            if employee != None:
 
-            message = f'{employee['Name']} has just clocked in'
+                database = Database()
+                if not database.check_clocked_in(employee['ID']):
+                    database.clock_in(
+                        self.location_spinner.text, employee['ID'])
 
-            self.message_label.text = message
+                    message = f'{employee['Name']} has just clocked in'
 
-            Clock.schedule_once(self.clear_message, 7)
-        else:
-            message = f'{employee['Name']} is already Clocked in.'
+                    self.message_label.text = message
 
-            self.message_label.text = message
+                    Clock.schedule_once(self.clear_message, 7)
+                else:
+                    message = f'{employee['Name']} is already Clocked in.'
 
-            Clock.schedule_once(self.clear_message, 7)
+                    self.message_label.text = message
+
+                    Clock.schedule_once(self.clear_message, 7)
+
+                self.location_spinner.text = 'Select a location'
+
+                self.employees_on_site()
+            else:
+                self.message_label.text = 'Please slect a location to clock in.'
+
+                Clock.schedule_once(self.clear_message, 7)
 
     def clock_out(self):
 
         employee = scan_qr_code()
 
-        database = Database()
-        if database.check_clocked_in(employee['ID']):
-            database.clock_out(employee['ID'])
+        if employee != None:
+            database = Database()
+            if database.check_clocked_in(employee['ID']):
+                database.clock_out(employee['ID'])
 
-            message = f'{employee['Name']} has just clocked out'
+                message = f'{employee['Name']} has just clocked out'
 
-            self.message_label.text = message
+                self.message_label.text = message
 
-            Clock.schedule_once(self.clear_message, 7)
-        else:
-            message = f'{employee['Name']} is already clocked out'
+                Clock.schedule_once(self.clear_message, 7)
+            else:
+                message = f'{employee['Name']} is already clocked out'
 
-            self.message_label.text = message
+                self.message_label.text = message
 
-            Clock.schedule_once(self.clear_message, 7)
+                Clock.schedule_once(self.clear_message, 7)
+
+            self.location_spinner.text = 'Select a location'
+
+            self.employees_on_site()
 
     def create_details_container(self):
         container = BoxLayout(orientation='vertical')
@@ -81,8 +107,8 @@ class MainWindow(App):
 
         details_text = 'Company: Pendle Doors'
 
-        details_label = Label(text=details_text, color=(0, 0, 0, 1))
-        container.add_widget(details_label)
+        self.details_label = Label(text=details_text, color=(0, 0, 0, 1))
+        container.add_widget(self.details_label)
 
         return container
 
@@ -124,7 +150,8 @@ class MainWindow(App):
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
         container.bind(size=self.update_message_bg, pos=self.update_message_bg)
 
-        self.message_label = Label(text='Idle', color=(0, 0, 0, 1))
+        self.message_label = Label(
+            text='Use QR Code on employee id to clock in / out', color=(0, 0, 0, 1))
         container.add_widget(self.message_label)
 
         return container
@@ -163,4 +190,4 @@ class MainWindow(App):
         instance.bg.pos = instance.pos
 
     def clear_message(self, dt):
-        self.message_label.text = ''
+        self.message_label.text = 'Use QR Code on employee id to clock in / out'

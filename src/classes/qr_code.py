@@ -6,6 +6,8 @@ def scan_qr_code():
 
     detector = cv2.QRCodeDetector()
 
+    a = None
+
     while True:
         _, img = cap.read()
 
@@ -22,13 +24,17 @@ def scan_qr_code():
     cap.release()
     cv2.destroyAllWindows()
 
-    pairs = [item.strip() for item in a.split(',')]
+    if a:
+        pairs = [item.strip() for item in a.split(',')]
 
-    qr_dict = {}
+        qr_dict = {}
 
-    for pair in pairs:
-        if ":" in pair:
-            key, value = pair.split(':', 1)
-            qr_dict[key.strip()] = value.strip()
+        for pair in pairs:
+            if ":" in pair:
+                key, value = pair.split(':', 1)
+                qr_dict[key.strip()] = value.strip()
 
-    return qr_dict
+        return qr_dict
+
+    else:
+        return None
