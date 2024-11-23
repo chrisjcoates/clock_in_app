@@ -148,7 +148,3 @@ class Database:
                 pass
 
         return employees_onsite
-
-
-database = Database()
-print(database.count_employess_on_site())
