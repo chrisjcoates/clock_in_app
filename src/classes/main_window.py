@@ -51,17 +51,17 @@ class MainWindow(App):
             if employee != None:
 
                 database = Database()
-                if database.check_clocked_in(employee['ID']):
+                if not database.check_clocked_in(employee['ID']):
                     database.clock_in(
                         self.location_spinner.text, employee['ID'])
 
-                    message = f'{employee['Name']} has just clocked in'
+                    message = f"{employee['Name']} has just clocked in"
 
                     self.message_label.text = message
 
                     Clock.schedule_once(self.clear_message, 7)
                 else:
-                    message = f'{employee['Name']} is already Clocked in.'
+                    message = f"{employee['Name']} is already Clocked in."
 
                     self.message_label.text = message
 
@@ -84,13 +84,13 @@ class MainWindow(App):
             if database.check_clocked_in(employee['ID']):
                 database.clock_out(employee['ID'])
 
-                message = f'{employee['Name']} has just clocked out'
+                message = f"{employee['Name']} has just clocked out"
 
                 self.message_label.text = message
 
                 Clock.schedule_once(self.clear_message, 7)
             else:
-                message = f'{employee['Name']} is already clocked out'
+                message = f"{employee['Name']} is already clocked out"
 
                 self.message_label.text = message
 
