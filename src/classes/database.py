@@ -136,15 +136,55 @@ class Database:
         sql_query = """
         SELECT * FROM employees
         """
-        self.cursor.execute(sql_query)
-        data = self.cursor.fetchall()
+        try:
+            self.cursor.execute(sql_query)
+            data = self.cursor.fetchall()
 
-        for row in data:
-            if row[3] == 'Mill Bank':
-                employees_onsite['Mill Bank'] += 1
-            elif row[3] == 'Moss Fold':
-                employees_onsite['Moss Fold'] += 1
-            else:
-                pass
+            self.close_db_connection()
+
+            for row in data:
+                if row[3] == 'Mill Bank':
+                    employees_onsite['Mill Bank'] += 1
+                elif row[3] == 'Moss Fold':
+                    employees_onsite['Moss Fold'] += 1
+                else:
+                    pass
+        except Exception as e:
+            print('Error counting employees on site.', e)
 
         return employees_onsite
+
+    def employee_details(self, employee_id):
+
+        self.connect_to_db()
+
+        sql_query = """
+        SELECT *
+        FROM employees
+        WHERE id = ?
+        """
+        try:
+            employee = self.cursor.execute(sql_query, employee_id)
+            print('Sucessfully retrieved employee details.')
+        except Exception as e:
+            print('Failed to get employee details.', e)
+
+        details = None
+
+        try:
+            record = [row for row in employee]
+            if len(record) > 0:
+                record = record[0]
+
+                details = {
+                    'ID': str(record[0]),
+                    'Name': record[1] + ' ' + record[2],
+                    'Location': record[3],
+                    'Clocked_in': record[4]
+                }
+        except Exception as e:
+            print(e)
+
+        self.close_db_connection()
+
+        return details

@@ -2,11 +2,11 @@ from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.spinner import Spinner
 from kivy.uix.label import Label
+from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.clock import Clock
 from kivy.graphics import Rectangle, Color, RoundedRectangle
 from classes.database import Database
-from classes.qr_code import scan_qr_code
 
 
 class MainWindow(App):
@@ -46,11 +46,12 @@ class MainWindow(App):
     def clock_in(self):
 
         if self.location_spinner.text != 'Select a location':
-            employee = scan_qr_code()
+            database = Database()
+
+            employee = database.employee_details(self.id_input.text)
 
             if employee != None:
 
-                database = Database()
                 if not database.check_clocked_in(employee['ID']):
                     database.clock_in(
                         self.location_spinner.text, employee['ID'])
@@ -76,11 +77,12 @@ class MainWindow(App):
             Clock.schedule_once(self.clear_message, 7)
 
     def clock_out(self):
+        database = Database()
 
-        employee = scan_qr_code()
+        employee = database.employee_details(self.id_input.text)
 
         if employee != None:
-            database = Database()
+
             if database.check_clocked_in(employee['ID']):
                 database.clock_out(employee['ID'])
 
@@ -131,6 +133,10 @@ class MainWindow(App):
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
         container.bind(size=self.update_button_bg, pos=self.update_button_bg)
 
+        id_input_label = Label(text='Enter id to clock in.')
+        id_input_label.color = (0, 0, 0, 1)
+        self.id_input = TextInput()
+
         clock_in_button = Button(text='Clock-in')
         clock_in_button.background_normal = ''
         clock_in_button.background_color = (56/255, 161/255, 24/255)
@@ -140,6 +146,8 @@ class MainWindow(App):
         clock_out_button.background_color = (158/255, 28/255, 25/255)
         clock_out_button.on_press = self.clock_out
 
+        container.add_widget(id_input_label)
+        container.add_widget(self.id_input)
         container.add_widget(clock_in_button)
         container.add_widget(clock_out_button)
 
@@ -151,7 +159,7 @@ class MainWindow(App):
         container.bind(size=self.update_message_bg, pos=self.update_message_bg)
 
         self.message_label = Label(
-            text='Use QR Code on employee id to clock in / out', color=(0, 0, 0, 1))
+            text='Enter employee ID to clock in or out.', color=(0, 0, 0, 1))
         container.add_widget(self.message_label)
 
         return container
@@ -190,4 +198,4 @@ class MainWindow(App):
         instance.bg.pos = instance.pos
 
     def clear_message(self, dt):
-        self.message_label.text = 'Use QR Code on employee id to clock in / out'
+        self.message_label.text = 'Enter employee ID to clock in or out.'
