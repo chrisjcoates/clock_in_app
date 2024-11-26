@@ -32,11 +32,14 @@ class MainWindow(App):
 
         return main_layout
 
-    def pop_up_message(self, message):
+    def pop_up_message(self, message, time=None):
 
         popup_layout = BoxLayout(orientation='vertical')
 
-        message = f'{message} at {self.current_time()}'
+        if time:
+            message = f'{message} at {time}'
+        else:
+            message = message
 
         message_label = Label(text=message)
         close_button = Button(text='Close')
@@ -50,6 +53,9 @@ class MainWindow(App):
         popup.open()
 
         close_button.bind(on_press=popup.dismiss)
+
+    def pop_up_user_check(self):
+        pass
 
     def employees_on_site(self):
 
@@ -74,21 +80,24 @@ class MainWindow(App):
             if employee != None:
 
                 if not database.check_clocked_in(employee['ID']):
+
+                    # Prompt to confirm here
+
                     database.clock_in(
                         self.location_spinner.text, employee['ID'])
 
                     message = f"{employee['Name']} has just clocked in at {
                         self.location_spinner.text}"
 
-                    self.pop_up_message(message)
+                    self.id_input.text = ''
 
-                    # self.message_label.text = message
+                    self.pop_up_message(message, self.current_time())
 
                 else:
                     message = f"{employee['Name']} is already Clocked in at {
                         self.location_spinner.text}."
 
-                    # self.message_label.text = message
+                    self.id_input.text = ''
 
                     self.pop_up_message(message)
 
@@ -108,20 +117,23 @@ class MainWindow(App):
         if employee != None:
 
             if database.check_clocked_in(employee['ID']):
+
+                # Prompt to confirm here
+
                 database.clock_out(employee['ID'])
 
-                message = f"{employee['Name']} has just clocked out."
+                message = f"{employee['Name']} has just clocked out"
 
-                # self.message_label.text = message
+                self.id_input.text = ''
 
-                self.pop_up_message(message)
+                self.pop_up_message(message, self.current_time())
 
             else:
                 message = f"{employee['Name']} is already clocked out"
 
-                # self.message_label.text = message
+                self.id_input.text = ''
 
-                # self.message_label.text = message
+                self.pop_up_message(message)
 
             self.location_spinner.text = 'Select a location'
 
@@ -186,7 +198,7 @@ class MainWindow(App):
         self.message_label = Label(color=(0, 0, 0, 1))
         current_date = str(
             datetime.datetime.now().strftime("%x"))
-        self.message_label.text = f'Todays date: {current_date}'
+        self.message_label.text = f"Today's date: {current_date}"
         container.add_widget(self.message_label)
 
         return container
