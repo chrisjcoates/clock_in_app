@@ -6,7 +6,9 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.clock import Clock
 from kivy.graphics import Rectangle, Color, RoundedRectangle
+from kivy.uix.popup import Popup
 from classes.database import Database
+import datetime
 
 
 class MainWindow(App):
@@ -29,6 +31,25 @@ class MainWindow(App):
         main_layout.add_widget(self.create_message_container())
 
         return main_layout
+
+    def pop_up_message(self, message):
+
+        popup_layout = BoxLayout(orientation='vertical')
+
+        message = f'{message} at {self.current_time()}'
+
+        message_label = Label(text=message)
+        close_button = Button(text='Close')
+
+        popup_layout.add_widget(message_label)
+        popup_layout.add_widget(close_button)
+
+        popup = Popup(title='Message', content=popup_layout,
+                      size_hint=(None, None), size=(900, 300))
+
+        popup.open()
+
+        close_button.bind(on_press=popup.dismiss)
 
     def employees_on_site(self):
 
@@ -56,25 +77,28 @@ class MainWindow(App):
                     database.clock_in(
                         self.location_spinner.text, employee['ID'])
 
-                    message = f"{employee['Name']} has just clocked in"
+                    message = f"{employee['Name']} has just clocked in at {
+                        self.location_spinner.text}"
 
-                    self.message_label.text = message
+                    self.pop_up_message(message)
 
-                    Clock.schedule_once(self.clear_message, 7)
+                    # self.message_label.text = message
+
                 else:
-                    message = f"{employee['Name']} is already Clocked in."
+                    message = f"{employee['Name']} is already Clocked in at {
+                        self.location_spinner.text}."
 
-                    self.message_label.text = message
+                    # self.message_label.text = message
 
-                    Clock.schedule_once(self.clear_message, 7)
+                    self.pop_up_message(message)
 
                 self.location_spinner.text = 'Select a location'
 
                 self.employees_on_site()
         else:
-            self.message_label.text = 'Please select a location to clock in.'
+            # self.message_label.text = 'Please select a location to clock in.'
 
-            Clock.schedule_once(self.clear_message, 7)
+            self.pop_up_message('Please select a location to clock in.')
 
     def clock_out(self):
         database = Database()
@@ -86,17 +110,18 @@ class MainWindow(App):
             if database.check_clocked_in(employee['ID']):
                 database.clock_out(employee['ID'])
 
-                message = f"{employee['Name']} has just clocked out"
+                message = f"{employee['Name']} has just clocked out."
 
-                self.message_label.text = message
+                # self.message_label.text = message
 
-                Clock.schedule_once(self.clear_message, 7)
+                self.pop_up_message(message)
+
             else:
                 message = f"{employee['Name']} is already clocked out"
 
-                self.message_label.text = message
+                # self.message_label.text = message
 
-                Clock.schedule_once(self.clear_message, 7)
+                # self.message_label.text = message
 
             self.location_spinner.text = 'Select a location'
 
@@ -158,8 +183,10 @@ class MainWindow(App):
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
         container.bind(size=self.update_message_bg, pos=self.update_message_bg)
 
-        self.message_label = Label(
-            text='Enter employee ID to clock in or out.', color=(0, 0, 0, 1))
+        self.message_label = Label(color=(0, 0, 0, 1))
+        current_date = str(
+            datetime.datetime.now().strftime("%x"))
+        self.message_label.text = f'Todays date: {current_date}'
         container.add_widget(self.message_label)
 
         return container
@@ -197,5 +224,6 @@ class MainWindow(App):
         instance.bg.size = instance.size
         instance.bg.pos = instance.pos
 
-    def clear_message(self, dt):
-        self.message_label.text = 'Enter employee ID to clock in or out.'
+    def current_time(self):
+        time_str = str(datetime.datetime.now().strftime("%X"))
+        return time_str
