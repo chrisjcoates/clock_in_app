@@ -17,8 +17,7 @@ class MainWindow(App):
         self.title = "Pendle Doors Clock-in System"
 
         # Set main layout of window
-        main_layout = BoxLayout(orientation='vertical',
-                                padding=25, spacing=20)
+        main_layout = BoxLayout(orientation="vertical", padding=25, spacing=20)
         # Set background colour of window
         self.main_background(main_layout, (1, 1, 1, 1))
 
@@ -34,36 +33,64 @@ class MainWindow(App):
 
     def pop_up_message(self, message, time=None):
 
-        popup_layout = BoxLayout(orientation='vertical')
+        popup_layout = BoxLayout(orientation="vertical")
 
         if time:
-            message = f'{message} at {time}'
+            message = f"{message} at {time}"
         else:
             message = message
 
         message_label = Label(text=message)
-        close_button = Button(text='Close')
+        close_button = Button(text="Close")
 
         popup_layout.add_widget(message_label)
         popup_layout.add_widget(close_button)
 
-        popup = Popup(title='Message', content=popup_layout,
-                      size_hint=(None, None), size=(900, 300))
+        popup = Popup(
+            title="Message",
+            content=popup_layout,
+            size_hint=(None, None),
+            size=(900, 300),
+        )
 
         popup.open()
 
         close_button.bind(on_press=popup.dismiss)
 
-    def pop_up_user_check(self):
-        pass
+    def pop_up_user_check(self, name, direction, callback):
+
+        popup_layout = BoxLayout(orientation="vertical")
+        button_layout = BoxLayout(orientation="horizontal")
+
+        if direction == "in":
+            message_text = f"You are about to clock in {name}, is this correct?"
+        else:
+            message_text = f"You are about to clock out {name}, is this correct?"
+
+        message_label = Label(text=message_text)
+
+        button_yes = Button(text="Yes")
+        button_no = Button(text="No")
+
+        button_layout.add_widget(button_yes)
+        button_layout.add_widget(button_no)
+
+        popup_layout.add_widget(message_label)
+        popup_layout.add_widget(button_layout)
+
+        popup = Popup(title="Message", content=popup_layout)
+        popup.size_hint = (None, None)
+        popup.size = (900, 300)
+
+        popup.open()
 
     def employees_on_site(self):
 
         database = Database()
         employees_onsite = database.count_employess_on_site()
 
-        self.mill_bank_on_site = employees_onsite['Mill Bank']
-        self.moss_fold_on_site = employees_onsite['Moss Fold']
+        self.mill_bank_on_site = employees_onsite["Mill Bank"]
+        self.moss_fold_on_site = employees_onsite["Moss Fold"]
 
         details_text = f"""Company: Pendle Doors\n\nMill Bank employees on site: {
             self.mill_bank_on_site}\nMoss Fold employees on site: {self.moss_fold_on_site}"""
@@ -72,42 +99,44 @@ class MainWindow(App):
 
     def clock_in(self):
 
-        if self.location_spinner.text != 'Select a location':
+        if self.location_spinner.text != "Select a location":
             database = Database()
 
             employee = database.employee_details(self.id_input.text)
 
             if employee != None:
 
-                if not database.check_clocked_in(employee['ID']):
+                if not database.check_clocked_in(employee["ID"]):
 
-                    # Prompt to confirm here
+                    self.pop_up_user_check(employee["Name"], "in")
 
-                    database.clock_in(
-                        self.location_spinner.text, employee['ID'])
+                    print("test")
+
+                    database.clock_in(self.location_spinner.text, employee["ID"])
 
                     message = f"{employee['Name']} has just clocked in at {
                         self.location_spinner.text}"
 
-                    self.id_input.text = ''
+                    self.id_input.text = ""
 
-                    self.pop_up_message(message, self.current_time())
+                    current_time = self.current_time()
+
+                    self.pop_up_message(message, current_time)
 
                 else:
                     message = f"{employee['Name']} is already Clocked in at {
                         self.location_spinner.text}."
 
-                    self.id_input.text = ''
+                    self.id_input.text = ""
 
                     self.pop_up_message(message)
 
-                self.location_spinner.text = 'Select a location'
+                self.location_spinner.text = "Select a location"
 
                 self.employees_on_site()
         else:
-            # self.message_label.text = 'Please select a location to clock in.'
 
-            self.pop_up_message('Please select a location to clock in.')
+            self.pop_up_message("Please select a location to clock in.")
 
     def clock_out(self):
         database = Database()
@@ -116,35 +145,37 @@ class MainWindow(App):
 
         if employee != None:
 
-            if database.check_clocked_in(employee['ID']):
+            if database.check_clocked_in(employee["ID"]):
 
                 # Prompt to confirm here
 
-                database.clock_out(employee['ID'])
+                database.clock_out(employee["ID"])
 
                 message = f"{employee['Name']} has just clocked out"
 
-                self.id_input.text = ''
+                self.id_input.text = ""
 
-                self.pop_up_message(message, self.current_time())
+                current_time = self.current_time()
+
+                self.pop_up_message(message, current_time)
 
             else:
                 message = f"{employee['Name']} is already clocked out"
 
-                self.id_input.text = ''
+                self.id_input.text = ""
 
                 self.pop_up_message(message)
 
-            self.location_spinner.text = 'Select a location'
+            self.location_spinner.text = "Select a location"
 
             self.employees_on_site()
 
     def create_details_container(self):
-        container = BoxLayout(orientation='vertical')
+        container = BoxLayout(orientation="vertical")
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
         container.bind(size=self.update_details_bg, pos=self.update_details_bg)
 
-        details_text = 'Company: Pendle Doors'
+        details_text = "Company: Pendle Doors"
 
         self.details_label = Label(text=details_text, color=(0, 0, 0, 1))
         container.add_widget(self.details_label)
@@ -152,35 +183,34 @@ class MainWindow(App):
         return container
 
     def create_location_container(self):
-        container = BoxLayout(orientation='vertical', padding=50)
+        container = BoxLayout(orientation="vertical", padding=50)
         container.size_hint = (1, None)
         container.height = 200
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
-        container.bind(size=self.update_location_bg,
-                       pos=self.update_location_bg)
+        container.bind(size=self.update_location_bg, pos=self.update_location_bg)
 
-        self.location_spinner = Spinner(values=['Mill Bank', 'Moss Fold'])
-        self.location_spinner.text = 'Select a location'
+        self.location_spinner = Spinner(values=["Mill Bank", "Moss Fold"])
+        self.location_spinner.text = "Select a location"
         container.add_widget(self.location_spinner)
 
         return container
 
     def create_button_container(self):
-        container = BoxLayout(orientation='vertical', padding=50, spacing=20)
+        container = BoxLayout(orientation="vertical", padding=50, spacing=20)
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
         container.bind(size=self.update_button_bg, pos=self.update_button_bg)
 
-        id_input_label = Label(text='Enter id to clock in.')
+        id_input_label = Label(text="Enter id to clock in.")
         id_input_label.color = (0, 0, 0, 1)
         self.id_input = TextInput()
 
-        clock_in_button = Button(text='Clock-in')
-        clock_in_button.background_normal = ''
-        clock_in_button.background_color = (56/255, 161/255, 24/255)
+        clock_in_button = Button(text="Clock-in")
+        clock_in_button.background_normal = ""
+        clock_in_button.background_color = (56 / 255, 161 / 255, 24 / 255)
         clock_in_button.on_press = self.clock_in
-        clock_out_button = Button(text='Clock-out')
-        clock_out_button.background_normal = ''
-        clock_out_button.background_color = (158/255, 28/255, 25/255)
+        clock_out_button = Button(text="Clock-out")
+        clock_out_button.background_normal = ""
+        clock_out_button.background_color = (158 / 255, 28 / 255, 25 / 255)
         clock_out_button.on_press = self.clock_out
 
         container.add_widget(id_input_label)
@@ -191,13 +221,12 @@ class MainWindow(App):
         return container
 
     def create_message_container(self):
-        container = BoxLayout(orientation='vertical')
+        container = BoxLayout(orientation="vertical")
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
         container.bind(size=self.update_message_bg, pos=self.update_message_bg)
 
         self.message_label = Label(color=(0, 0, 0, 1))
-        current_date = str(
-            datetime.datetime.now().strftime("%x"))
+        current_date = str(datetime.datetime.now().strftime("%x"))
         self.message_label.text = f"Today's date: {current_date}"
         container.add_widget(self.message_label)
 
@@ -207,14 +236,12 @@ class MainWindow(App):
         with layout.canvas.before:
             Color(*colour)
             self.main_layout_bg = Rectangle(size=layout.size, pos=layout.pos)
-        layout.bind(size=self.update_main_layout_bg,
-                    pos=self.update_main_layout_bg)
+        layout.bind(size=self.update_main_layout_bg, pos=self.update_main_layout_bg)
 
     def rounded_background(self, layout, colour):
         with layout.canvas.before:
             Color(*colour)
-            layout.bg = RoundedRectangle(
-                size=layout.size, pos=layout.pos, radius=[20])
+            layout.bg = RoundedRectangle(size=layout.size, pos=layout.pos, radius=[20])
 
     def update_main_layout_bg(self, instance, value):
         self.main_layout_bg.size = instance.size
