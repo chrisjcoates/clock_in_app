@@ -6,7 +6,6 @@ Employee Clock-in / Clock-out application
 ## Dependencys
 
 - Kivy
-- opencv-python
 
 ## To run
 - Run main.py to execute program
