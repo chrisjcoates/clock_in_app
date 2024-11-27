@@ -59,6 +59,12 @@ class MainWindow(App):
 
     def pop_up_user_check(self, name, direction, callback):
 
+        result = {"Value": None}
+
+        def on_yes(instance):
+            callback(True)
+            popup.dismiss()
+
         popup_layout = BoxLayout(orientation="vertical")
         button_layout = BoxLayout(orientation="horizontal")
 
@@ -82,102 +88,118 @@ class MainWindow(App):
         popup.size_hint = (None, None)
         popup.size = (900, 300)
 
+        button_yes.bind(on_press=on_yes)
+
+        button_no.bind(on_press=popup.dismiss)
+
         popup.open()
+
+        return result
 
     def employees_on_site(self):
 
+        # Open database
         database = Database()
+        # Run count function for number of employees at sites
         employees_onsite = database.count_employess_on_site()
 
+        # Get values of employees at each site
         self.mill_bank_on_site = employees_onsite["Mill Bank"]
         self.moss_fold_on_site = employees_onsite["Moss Fold"]
 
+        # Set the details text inclduding clocked in employee count
         details_text = f"""Company: Pendle Doors\n\nMill Bank employees on site: {
             self.mill_bank_on_site}\nMoss Fold employees on site: {self.moss_fold_on_site}"""
 
+        # Apply detail text to label
         self.details_label.text = details_text
 
     def clock_in(self):
 
+        def user_check_response(response):
+            """Handles response to pop up yes or no button selection"""
+            if response:  # if response is true
+                # Clock in user
+                database.clock_in(self.location_spinner.text, employee["ID"])
+                # Set clock in message
+                message = f"{employee['Name']} has just clocked in at {self.location_spinner.text}"
+                self.id_input.text = ""  # Clear id input
+                self.pop_up_message(message)  # execute popup with message
+                self.employees_on_site()  # re-count employees on sites for details container
+                self.location_spinner.text = (
+                    "select a location"  # reset the spinner text
+                )
+            else:
+                self.pop_up_message("Clock-in canceled by user.")
+
+        # if a location has been selected
         if self.location_spinner.text != "Select a location":
+            # Open database
             database = Database()
-
+            # Get employee details
             employee = database.employee_details(self.id_input.text)
-
-            if employee != None:
-
+            # if employee is found
+            if employee is not None:
+                # and if they are not already clocked in
                 if not database.check_clocked_in(employee["ID"]):
-
-                    self.pop_up_user_check(employee["Name"], "in")
-
-                    print("test")
-
-                    database.clock_in(self.location_spinner.text, employee["ID"])
-
-                    message = f"{employee['Name']} has just clocked in at {
-                        self.location_spinner.text}"
-
-                    self.id_input.text = ""
-
-                    current_time = self.current_time()
-
-                    self.pop_up_message(message, current_time)
-
+                    # Pop up for confirmation of user clock in
+                    self.pop_up_user_check(employee["Name"], "in", user_check_response)
                 else:
-                    message = f"{employee['Name']} is already Clocked in at {
-                        self.location_spinner.text}."
+                    # if user already clocked in set message
+                    message = f"{employee['Name']} is already clocked in at {self.location_spinner.text}."
+                    self.id_input.text = ""  # clear id input
+                    self.pop_up_message(message)  # execute popup with message
 
-                    self.id_input.text = ""
-
-                    self.pop_up_message(message)
-
-                self.location_spinner.text = "Select a location"
-
-                self.employees_on_site()
+                self.employees_on_site()  # re-count employees on sites
         else:
-
+            # display popup message if no location is selected
             self.pop_up_message("Please select a location to clock in.")
 
     def clock_out(self):
+        # Open database
         database = Database()
-
+        # get employee details
         employee = database.employee_details(self.id_input.text)
 
+        # if employee is found
         if employee != None:
-
+            # and employee is clocked in
             if database.check_clocked_in(employee["ID"]):
 
                 # Prompt to confirm here
 
-                database.clock_out(employee["ID"])
-
+                database.clock_out(employee["ID"])  # clock out employee
+                # set message for clock out
                 message = f"{employee['Name']} has just clocked out"
+                self.id_input.text = ""  # reset id input text
 
-                self.id_input.text = ""
-
+                # set the current time and execute popup with message
                 current_time = self.current_time()
-
                 self.pop_up_message(message, current_time)
 
             else:
+                # of employee is already clocked out
+                # Set message
                 message = f"{employee['Name']} is already clocked out"
-
-                self.id_input.text = ""
-
+                self.id_input.text = ""  # reset id input text
+                # execute popup meassge
                 self.pop_up_message(message)
-
+            # reset the location input text
             self.location_spinner.text = "Select a location"
 
-            self.employees_on_site()
+            self.employees_on_site()  # re-count employees on site
 
     def create_details_container(self):
+        # set container layout
         container = BoxLayout(orientation="vertical")
+        # create rectangle for background colour
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
+        # set rectangle size to window size
         container.bind(size=self.update_details_bg, pos=self.update_details_bg)
-
+        # Set details label text and create label
         details_text = "Company: Pendle Doors"
-
         self.details_label = Label(text=details_text, color=(0, 0, 0, 1))
+        # add label to widget
         container.add_widget(self.details_label)
 
         return container
@@ -200,7 +222,7 @@ class MainWindow(App):
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
         container.bind(size=self.update_button_bg, pos=self.update_button_bg)
 
-        id_input_label = Label(text="Enter id to clock in.")
+        id_input_label = Label(text="Enter employee ID to clock in.")
         id_input_label.color = (0, 0, 0, 1)
         self.id_input = TextInput()
 
@@ -226,7 +248,7 @@ class MainWindow(App):
         container.bind(size=self.update_message_bg, pos=self.update_message_bg)
 
         self.message_label = Label(color=(0, 0, 0, 1))
-        current_date = str(datetime.datetime.now().strftime("%x"))
+        current_date = str(datetime.datetime.now().strftime("%d/%m/%Y"))
         self.message_label.text = f"Today's date: {current_date}"
         container.add_widget(self.message_label)
 
