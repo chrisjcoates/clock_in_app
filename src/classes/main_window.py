@@ -194,7 +194,7 @@ class MainWindow(App):
         container = BoxLayout(orientation="vertical")
         # create rectangle for background colour
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
-        # set rectangle size to window size
+        # set rectangle size and position to window size / pos
         container.bind(size=self.update_details_bg, pos=self.update_details_bg)
         # Set details label text and create label
         details_text = "Company: Pendle Doors"
@@ -205,27 +205,36 @@ class MainWindow(App):
         return container
 
     def create_location_container(self):
+        # create layout
         container = BoxLayout(orientation="vertical", padding=50)
+        # set fixed height
         container.size_hint = (1, None)
         container.height = 200
+        # create rectanle for background colour
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
+        # set rectangle size and postition to window size / pos
         container.bind(size=self.update_location_bg, pos=self.update_location_bg)
-
+        # Create spinner (combobox) set values and defsutl value
         self.location_spinner = Spinner(values=["Mill Bank", "Moss Fold"])
         self.location_spinner.text = "Select a location"
+        # add spinnder to layout
         container.add_widget(self.location_spinner)
 
         return container
 
     def create_button_container(self):
+        # set container layout
         container = BoxLayout(orientation="vertical", padding=50, spacing=20)
+        # add rectangle for background colour
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
+        # set rectangle size and position to window size / pos
         container.bind(size=self.update_button_bg, pos=self.update_button_bg)
 
+        # crete employee id input
         id_input_label = Label(text="Enter employee ID to clock in.")
         id_input_label.color = (0, 0, 0, 1)
         self.id_input = TextInput()
-
+        # Create clock in / out buttons
         clock_in_button = Button(text="Clock-in")
         clock_in_button.background_normal = ""
         clock_in_button.background_color = (56 / 255, 161 / 255, 24 / 255)
@@ -234,7 +243,7 @@ class MainWindow(App):
         clock_out_button.background_normal = ""
         clock_out_button.background_color = (158 / 255, 28 / 255, 25 / 255)
         clock_out_button.on_press = self.clock_out
-
+        # add widgets to layout
         container.add_widget(id_input_label)
         container.add_widget(self.id_input)
         container.add_widget(clock_in_button)
@@ -243,24 +252,32 @@ class MainWindow(App):
         return container
 
     def create_message_container(self):
+        # set container layout
         container = BoxLayout(orientation="vertical")
+        # add rectangle for background colour
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
         container.bind(size=self.update_message_bg, pos=self.update_message_bg)
 
+        # create message lable
         self.message_label = Label(color=(0, 0, 0, 1))
         current_date = str(datetime.datetime.now().strftime("%d/%m/%Y"))
         self.message_label.text = f"Today's date: {current_date}"
+        # add label to widget
         container.add_widget(self.message_label)
 
         return container
 
     def main_background(self, layout, colour):
+        # using the provided layout
         with layout.canvas.before:
+            # set colour and create rectangle
             Color(*colour)
             self.main_layout_bg = Rectangle(size=layout.size, pos=layout.pos)
+        # set size and position of main background to layout size / pos
         layout.bind(size=self.update_main_layout_bg, pos=self.update_main_layout_bg)
 
     def rounded_background(self, layout, colour):
+        # using layot provided set colour and create rounded rectangle
         with layout.canvas.before:
             Color(*colour)
             layout.bg = RoundedRectangle(size=layout.size, pos=layout.pos, radius=[20])
