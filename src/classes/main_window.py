@@ -37,6 +37,99 @@ class MainWindow(Screen):
 
         self.add_widget(main_layout)
 
+        def create_nav(self):
+        container = BoxLayout(orientation="vertical")
+        self.square_background(container, (0.129, 0.129, 0.129, 1))
+        container.bind(size=self.update_container_bg, pos=self.update_container_bg)
+        container.size_hint = (1, None)
+        container.height = 100
+
+        self.nav_spinner = Spinner(
+            text="Menu", values=["Add Employee", "Employee List"]
+        )
+        self.nav_spinner.bind(text=self.switch_screen)
+        container.add_widget(self.nav_spinner)
+
+        return container
+
+    def create_details_container(self):
+        # set container layout
+        container = BoxLayout(orientation="vertical")
+        # create rectangle for background colour
+        self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
+        # set rectangle size and position to window size / pos
+        container.bind(size=self.update_container_bg, pos=self.update_container_bg)
+        # Set details label text and create label
+        details_text = "Company: Pendle Doors"
+        self.details_label = Label(text=details_text, color=(0, 0, 0, 1))
+        # add label to widget
+        container.add_widget(self.details_label)
+
+        return container
+
+    def create_location_container(self):
+        # create layout
+        container = BoxLayout(orientation="vertical", padding=50)
+        # set fixed height
+        container.size_hint = (1, None)
+        container.height = 200
+        # create rectanle for background colour
+        self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
+        # set rectangle size and postition to window size / pos
+        container.bind(size=self.update_container_bg, pos=self.update_container_bg)
+        # Create spinner (combobox) set values and defsutl value
+        self.location_spinner = Spinner(values=["Mill Bank", "Moss Fold"])
+        self.location_spinner.text = "Select a location"
+        # add spinnder to layout
+        container.add_widget(self.location_spinner)
+
+        return container
+
+    def create_button_container(self):
+        # set container layout
+        container = BoxLayout(orientation="vertical", padding=50, spacing=20)
+        # add rectangle for background colour
+        self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
+        # set rectangle size and position to window size / pos
+        container.bind(size=self.update_container_bg, pos=self.update_container_bg)
+
+        # crete employee id input
+        id_input_label = Label(text="Enter employee ID to clock in.")
+        id_input_label.color = (0, 0, 0, 1)
+        self.id_input = TextInput()
+        # Create clock in / out buttons
+        clock_in_button = Button(text="Clock-in")
+        clock_in_button.background_normal = ""
+        clock_in_button.background_color = (56 / 255, 161 / 255, 24 / 255)
+        clock_in_button.on_press = self.clock_in
+        clock_out_button = Button(text="Clock-out")
+        clock_out_button.background_normal = ""
+        clock_out_button.background_color = (158 / 255, 28 / 255, 25 / 255)
+        clock_out_button.on_press = self.clock_out
+        # add widgets to layout
+        container.add_widget(id_input_label)
+        container.add_widget(self.id_input)
+        container.add_widget(clock_in_button)
+        container.add_widget(clock_out_button)
+
+        return container
+
+    def create_message_container(self):
+        # set container layout
+        container = BoxLayout(orientation="vertical")
+        # add rectangle for background colour
+        self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
+        container.bind(size=self.update_container_bg, pos=self.update_container_bg)
+
+        # create message lable
+        self.message_label = Label(color=(0, 0, 0, 1))
+        current_date = str(datetime.datetime.now().strftime("%d/%m/%Y"))
+        self.message_label.text = f"Today's date: {current_date}"
+        # add label to widget
+        container.add_widget(self.message_label)
+
+        return container
+
     def reset_nav(self, instance, text):
         instance.text = "Menu"
 
@@ -217,99 +310,6 @@ class MainWindow(Screen):
                 self.pop_up_message(message)  # execute popup with message
 
             self.employees_on_site()  # re-count employees on sites
-
-    def create_nav(self):
-        container = BoxLayout(orientation="vertical")
-        self.square_background(container, (0.129, 0.129, 0.129, 1))
-        container.bind(size=self.update_container_bg, pos=self.update_container_bg)
-        container.size_hint = (1, None)
-        container.height = 100
-
-        self.nav_spinner = Spinner(
-            text="Menu", values=["Add Employee", "Employee List"]
-        )
-        self.nav_spinner.bind(text=self.switch_screen)
-        container.add_widget(self.nav_spinner)
-
-        return container
-
-    def create_details_container(self):
-        # set container layout
-        container = BoxLayout(orientation="vertical")
-        # create rectangle for background colour
-        self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
-        # set rectangle size and position to window size / pos
-        container.bind(size=self.update_container_bg, pos=self.update_container_bg)
-        # Set details label text and create label
-        details_text = "Company: Pendle Doors"
-        self.details_label = Label(text=details_text, color=(0, 0, 0, 1))
-        # add label to widget
-        container.add_widget(self.details_label)
-
-        return container
-
-    def create_location_container(self):
-        # create layout
-        container = BoxLayout(orientation="vertical", padding=50)
-        # set fixed height
-        container.size_hint = (1, None)
-        container.height = 200
-        # create rectanle for background colour
-        self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
-        # set rectangle size and postition to window size / pos
-        container.bind(size=self.update_container_bg, pos=self.update_container_bg)
-        # Create spinner (combobox) set values and defsutl value
-        self.location_spinner = Spinner(values=["Mill Bank", "Moss Fold"])
-        self.location_spinner.text = "Select a location"
-        # add spinnder to layout
-        container.add_widget(self.location_spinner)
-
-        return container
-
-    def create_button_container(self):
-        # set container layout
-        container = BoxLayout(orientation="vertical", padding=50, spacing=20)
-        # add rectangle for background colour
-        self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
-        # set rectangle size and position to window size / pos
-        container.bind(size=self.update_container_bg, pos=self.update_container_bg)
-
-        # crete employee id input
-        id_input_label = Label(text="Enter employee ID to clock in.")
-        id_input_label.color = (0, 0, 0, 1)
-        self.id_input = TextInput()
-        # Create clock in / out buttons
-        clock_in_button = Button(text="Clock-in")
-        clock_in_button.background_normal = ""
-        clock_in_button.background_color = (56 / 255, 161 / 255, 24 / 255)
-        clock_in_button.on_press = self.clock_in
-        clock_out_button = Button(text="Clock-out")
-        clock_out_button.background_normal = ""
-        clock_out_button.background_color = (158 / 255, 28 / 255, 25 / 255)
-        clock_out_button.on_press = self.clock_out
-        # add widgets to layout
-        container.add_widget(id_input_label)
-        container.add_widget(self.id_input)
-        container.add_widget(clock_in_button)
-        container.add_widget(clock_out_button)
-
-        return container
-
-    def create_message_container(self):
-        # set container layout
-        container = BoxLayout(orientation="vertical")
-        # add rectangle for background colour
-        self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
-        container.bind(size=self.update_container_bg, pos=self.update_container_bg)
-
-        # create message lable
-        self.message_label = Label(color=(0, 0, 0, 1))
-        current_date = str(datetime.datetime.now().strftime("%d/%m/%Y"))
-        self.message_label.text = f"Today's date: {current_date}"
-        # add label to widget
-        container.add_widget(self.message_label)
-
-        return container
 
     def rounded_background(self, layout, colour):
         # using layot provided set colour and create rounded rectangle
