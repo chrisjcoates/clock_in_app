@@ -159,38 +159,43 @@ class MainWindow(App):
             self.pop_up_message("Please select a location to clock in.")
 
     def clock_out(self):
+
+        def user_check_response(response):
+            """Handles response to pop up yes or no button selection"""
+            if response:  # if response is true
+                # Clock out user
+                database.clock_out(employee["ID"])
+                # Set clock out message
+                message = f"{employee['Name']} has just clocked out."
+                self.id_input.text = ""  # Clear id input
+                self.pop_up_message(message)  # execute popup with message
+                self.employees_on_site()  # re-count employees on sites for details container
+                self.location_spinner.text = (
+                    "select a location"  # reset the spinner text
+                )
+            else:
+                self.pop_up_message("Clock-out canceled by user.")
+                self.location_spinner.text = (
+                    "select a location"  # reset the spinner text
+                )
+
         # Open database
         database = Database()
-        # get employee details
+        # Get employee details
         employee = database.employee_details(self.id_input.text)
-
         # if employee is found
-        if employee != None:
-            # and employee is clocked in
+        if employee is not None:
+            # and if they are clocked in
             if database.check_clocked_in(employee["ID"]):
-
-                # Prompt to confirm here
-
-                database.clock_out(employee["ID"])  # clock out employee
-                # set message for clock out
-                message = f"{employee['Name']} has just clocked out"
-                self.id_input.text = ""  # reset id input text
-
-                # set the current time and execute popup with message
-                current_time = self.current_time()
-                self.pop_up_message(message, current_time)
-
+                # Pop up for confirmation of user clock in
+                self.pop_up_user_check(employee["Name"], "in", user_check_response)
             else:
-                # of employee is already clocked out
-                # Set message
-                message = f"{employee['Name']} is already clocked out"
-                self.id_input.text = ""  # reset id input text
-                # execute popup meassge
-                self.pop_up_message(message)
-            # reset the location input text
-            self.location_spinner.text = "Select a location"
+                # if user already clocked in set message
+                message = f"{employee['Name']} is already clocked out."
+                self.id_input.text = ""  # clear id input
+                self.pop_up_message(message)  # execute popup with message
 
-            self.employees_on_site()  # re-count employees on site
+            self.employees_on_site()  # re-count employees on sites
 
     def create_details_container(self):
         # set container layout
