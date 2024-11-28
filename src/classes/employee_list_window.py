@@ -1,20 +1,22 @@
-from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.spinner import Spinner
+from kivy.uix.screenmanager import Screen
 from kivy.graphics import Rectangle, Color
-from database import Database
+from classes.database import Database
 
 
-class EmployeeListWindow(App):
-    def build(self):
+class EmployeeListWindow(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
         self.database = Database()
 
         self.main_layout = BoxLayout(orientation="vertical", spacing=0, padding=0)
-        self.main_background(self.main_layout, (1, 1, 1, 1))
+        self.square_background(self.main_layout, (1, 1, 1, 1))
+        self.main_layout.bind(size=self.layout_bg, pos=self.layout_bg)
 
         self.second_layout = BoxLayout(orientation="vertical", padding=0, spacing=0)
 
@@ -31,7 +33,21 @@ class EmployeeListWindow(App):
             on_press=lambda instance: self.update_table("clocked out")
         )
 
-        return self.main_layout
+        self.add_widget(self.main_layout)
+
+    def reset_nav(self, instance, text):
+        self.nav_spinner.text = "Menu"
+
+    def switch_screen(self, instance, text):
+
+        original_text = text
+
+        if original_text == "Employee List":
+            self.manager.current = "employee_list_window"
+        elif original_text == "Clock-in/out":
+            self.manager.current = "main_window"
+
+        self.reset_nav(instance, text)
 
     def create_nav(self):
         container = BoxLayout(orientation="vertical")
@@ -40,8 +56,9 @@ class EmployeeListWindow(App):
         container.size_hint = (1, None)
         container.height = 100
 
-        nav_button = Spinner(text="Nav", values=["Clock-in/out", "Add Employee"])
-        container.add_widget(nav_button)
+        self.nav_spinner = Spinner(text="Menu", values=["Clock-in/out", "Add Employee"])
+        self.nav_spinner.bind(text=self.switch_screen)
+        container.add_widget(self.nav_spinner)
 
         return container
 
@@ -132,18 +149,5 @@ class EmployeeListWindow(App):
         instance.bg.size = instance.size
         instance.bg.pos = instance.pos
 
-    def main_background(self, layout, colour):
-        # using the provided layout
-        with layout.canvas.before:
-            # set colour and create rectangle
-            Color(*colour)
-            self.main_layout_bg = Rectangle(size=layout.size, pos=layout.pos)
-        # set size and position of main background to layout size / pos
-        layout.bind(size=self.update_main_layout_bg, pos=self.update_main_layout_bg)
 
-    def update_main_layout_bg(self, instance, value):
-        self.main_layout_bg.size = instance.size
-        self.main_layout_bg.pos = instance.pos
-
-
-EmployeeListWindow().run()
+# EmployeeListWindow().run()
