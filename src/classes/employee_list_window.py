@@ -4,12 +4,14 @@ from kivy.uix.scrollview import ScrollView
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.spinner import Spinner
+from kivy.uix.screenmanager import Screen
 from kivy.graphics import Rectangle, Color
-from database import Database
+from classes.database import Database
 
 
-class EmployeeListWindow(App):
-    def build(self):
+class EmployeeListWindow(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
         self.database = Database()
 
@@ -31,7 +33,15 @@ class EmployeeListWindow(App):
             on_press=lambda instance: self.update_table("clocked out")
         )
 
-        return self.main_layout
+        self.add_widget(self.main_layout)
+        # return self.main_layout
+
+    def switch_screen(self, instance, text):
+
+        if instance.text == "Employee List":
+            self.manager.current = "employee_list_window"
+        else:
+            self.manager.current = "main_window"
 
     def create_nav(self):
         container = BoxLayout(orientation="vertical")
@@ -40,8 +50,9 @@ class EmployeeListWindow(App):
         container.size_hint = (1, None)
         container.height = 100
 
-        nav_button = Spinner(text="Nav", values=["Clock-in/out", "Add Employee"])
-        container.add_widget(nav_button)
+        self.nav_spinner = Spinner(text="Nav", values=["Clock-in/out", "Add Employee"])
+        self.nav_spinner.bind(text=self.switch_screen)
+        container.add_widget(self.nav_spinner)
 
         return container
 
@@ -146,4 +157,4 @@ class EmployeeListWindow(App):
         self.main_layout_bg.pos = instance.pos
 
 
-EmployeeListWindow().run()
+# EmployeeListWindow().run()

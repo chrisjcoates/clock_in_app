@@ -4,15 +4,18 @@ from kivy.uix.spinner import Spinner
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
+from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.clock import Clock
 from kivy.graphics import Rectangle, Color, RoundedRectangle
 from kivy.uix.popup import Popup
 from classes.database import Database
+from classes.employee_list_window import EmployeeListWindow
 import datetime
 
 
-class MainWindow(App):
-    def build(self):
+class MainWindow(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
         self.title = "Pendle Doors Clock-in System"
 
@@ -33,7 +36,16 @@ class MainWindow(App):
         second_layout.add_widget(self.create_button_container())
         second_layout.add_widget(self.create_message_container())
 
-        return main_layout
+        self.add_widget(main_layout)
+
+        # return main_layout
+
+    def switch_screen(self, instance, text):
+
+        if instance.text == "Employee List":
+            self.manager.current = "employee_list_window"
+        else:
+            self.manager.current = "main_window"
 
     def pop_up_message(self, message, time=None):
 
@@ -208,8 +220,9 @@ class MainWindow(App):
         container.size_hint = (1, None)
         container.height = 100
 
-        nav_button = Spinner(text="Nav", values=["Add Employee", "View all employees"])
-        container.add_widget(nav_button)
+        self.nav_spinner = Spinner(text="Nav", values=["Main Window", "Employee List"])
+        self.nav_spinner.bind(text=self.switch_screen)
+        container.add_widget(self.nav_spinner)
 
         return container
 
