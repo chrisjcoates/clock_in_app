@@ -37,7 +37,7 @@ class MainWindow(Screen):
 
         self.add_widget(main_layout)
 
-        def create_nav(self):
+    def create_nav(self):
         container = BoxLayout(orientation="vertical")
         self.square_background(container, (0.129, 0.129, 0.129, 1))
         container.bind(size=self.update_container_bg, pos=self.update_container_bg)
