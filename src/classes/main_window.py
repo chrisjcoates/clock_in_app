@@ -31,7 +31,7 @@ class MainWindow(Screen):
         second_layout.add_widget(self.create_details_container())
         self.employees_on_site()
         second_layout.add_widget(self.create_location_container())
-        second_layout.add_widget(BoxLayout(size_hint=(1, None), height=150))
+        second_layout.add_widget(BoxLayout(size_hint=(1, None), height=100))
         second_layout.add_widget(self.create_button_container())
         second_layout.add_widget(self.create_message_container())
 
@@ -97,6 +97,10 @@ class MainWindow(Screen):
         id_input_label = Label(text="Enter employee ID to clock in.")
         id_input_label.color = (0, 0, 0, 1)
         self.id_input = TextInput()
+        self.id_input.multiline = False
+        self.id_input.halign = "center"
+        self.id_input.padding = (10, 10, 10, 10)
+        self.id_input.font_size = 40
         # Create clock in / out buttons
         clock_in_button = Button(text="Clock-in")
         clock_in_button.background_normal = ""

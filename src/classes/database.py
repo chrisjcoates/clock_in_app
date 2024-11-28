@@ -142,7 +142,7 @@ class Database:
             """
 
             try:
-                self.cursor.execute(sql_query, employee_id)
+                self.cursor.execute(sql_query, (employee_id,))
                 self.conn.commit()
 
                 print("Record updated sucessfully, employee clocked out.")
@@ -188,7 +188,7 @@ class Database:
         WHERE id = ?
         """
         try:
-            employee = self.cursor.execute(sql_query, employee_id)
+            employee = self.cursor.execute(sql_query, (employee_id,))
             print("Sucessfully retrieved employee details.")
         except Exception as e:
             print("Failed to get employee details.", e)
