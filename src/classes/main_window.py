@@ -17,17 +17,22 @@ class MainWindow(App):
         self.title = "Pendle Doors Clock-in System"
 
         # Set main layout of window
-        main_layout = BoxLayout(orientation="vertical", padding=25, spacing=20)
+        main_layout = BoxLayout(orientation="vertical", spacing=20)
         # Set background colour of window
         self.main_background(main_layout, (1, 1, 1, 1))
 
+        second_layout = BoxLayout(orientation="vertical", padding=25, spacing=20)
+        # self.main_background(second_layout, (1, 1, 1, 1))
+
         # Add containers to main layout
-        main_layout.add_widget(self.create_details_container())
+        main_layout.add_widget(self.create_nav())
+        main_layout.add_widget(second_layout)
+        second_layout.add_widget(self.create_details_container())
         self.employees_on_site()
-        main_layout.add_widget(self.create_location_container())
-        main_layout.add_widget(BoxLayout(size_hint=(1, None), height=150))
-        main_layout.add_widget(self.create_button_container())
-        main_layout.add_widget(self.create_message_container())
+        second_layout.add_widget(self.create_location_container())
+        second_layout.add_widget(BoxLayout(size_hint=(1, None), height=150))
+        second_layout.add_widget(self.create_button_container())
+        second_layout.add_widget(self.create_message_container())
 
         return main_layout
 
@@ -197,6 +202,18 @@ class MainWindow(App):
 
             self.employees_on_site()  # re-count employees on sites
 
+    def create_nav(self):
+        container = BoxLayout(orientation="vertical")
+        self.square_background(container, (0.129, 0.129, 0.129, 1))
+        container.bind(size=self.update_nav_layout_bg, pos=self.update_nav_layout_bg)
+        container.size_hint = (1, None)
+        container.height = 100
+
+        nav_button = Spinner(text="Nav", values=["Add Employee", "View all employees"])
+        container.add_widget(nav_button)
+
+        return container
+
     def create_details_container(self):
         # set container layout
         container = BoxLayout(orientation="vertical")
@@ -290,9 +307,20 @@ class MainWindow(App):
             Color(*colour)
             layout.bg = RoundedRectangle(size=layout.size, pos=layout.pos, radius=[20])
 
+    def square_background(self, layout, colour):
+        # using the provided layout
+        with layout.canvas.before:
+            # set colour and create rectangle
+            Color(*colour)
+            layout.bg = Rectangle(size=layout.size, pos=layout.pos)
+
     def update_main_layout_bg(self, instance, value):
         self.main_layout_bg.size = instance.size
         self.main_layout_bg.pos = instance.pos
+
+    def update_nav_layout_bg(self, instance, value):
+        instance.bg.size = instance.size
+        instance.bg.pos = instance.pos
 
     def update_details_bg(self, instance, value):
         instance.bg.size = instance.size
