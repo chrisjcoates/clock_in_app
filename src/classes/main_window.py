@@ -22,7 +22,6 @@ class MainWindow(App):
         self.main_background(main_layout, (1, 1, 1, 1))
 
         second_layout = BoxLayout(orientation="vertical", padding=25, spacing=20)
-        # self.main_background(second_layout, (1, 1, 1, 1))
 
         # Add containers to main layout
         main_layout.add_widget(self.create_nav())

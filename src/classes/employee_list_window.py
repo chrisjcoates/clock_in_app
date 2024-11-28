@@ -3,6 +3,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.button import Button
 from kivy.uix.label import Label
+from kivy.uix.spinner import Spinner
 from kivy.graphics import Rectangle, Color
 from database import Database
 
@@ -15,8 +16,13 @@ class EmployeeListWindow(App):
         self.main_layout = BoxLayout(orientation="vertical", spacing=0, padding=0)
         self.main_background(self.main_layout, (1, 1, 1, 1))
 
-        self.main_layout.add_widget(self.create_button_container())
-        self.main_layout.add_widget(self.create_table_container("all"))
+        self.second_layout = BoxLayout(orientation="vertical", padding=0, spacing=0)
+
+        self.second_layout.add_widget(self.create_button_container())
+        self.second_layout.add_widget(self.create_table_container("all"))
+        self.main_layout.add_widget(self.create_nav())
+        self.main_layout.add_widget(self.second_layout)
+
         self.all_button.bind(on_press=lambda instance: self.update_table("all"))
         self.clocked_in_button.bind(
             on_press=lambda instance: self.update_table("clocked in")
@@ -26,6 +32,18 @@ class EmployeeListWindow(App):
         )
 
         return self.main_layout
+
+    def create_nav(self):
+        container = BoxLayout(orientation="vertical")
+        self.square_background(container, (0.129, 0.129, 0.129, 1))
+        container.bind(size=self.layout_bg, pos=self.layout_bg)
+        container.size_hint = (1, None)
+        container.height = 100
+
+        nav_button = Spinner(text="Nav", values=["Clock-in/out", "Add Employee"])
+        container.add_widget(nav_button)
+
+        return container
 
     def create_button_container(self):
         container = BoxLayout(orientation="horizontal", padding=10)
@@ -100,8 +118,8 @@ class EmployeeListWindow(App):
         return self.table
 
     def update_table(self, filter=None):
-        self.main_layout.remove_widget(self.table)
-        self.main_layout.add_widget(self.create_table_container(filter))
+        self.second_layout.remove_widget(self.table)
+        self.second_layout.add_widget(self.create_table_container(filter))
 
     def square_background(self, layout, colour):
         # using the provided layout
