@@ -7,4 +7,6 @@ if __name__ == "__main__":
 
 # todos
 
-# fix location in message to come from database not spinner text
+# Add menu nav to main window
+# Create add employee window
+# Create view employees window

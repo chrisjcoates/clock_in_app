@@ -59,10 +59,12 @@ class MainWindow(App):
 
     def pop_up_user_check(self, name, direction, callback):
 
-        result = {"Value": None}
-
         def on_yes(instance):
             callback(True)
+            popup.dismiss()
+
+        def on_no(instance):
+            callback(False)
             popup.dismiss()
 
         popup_layout = BoxLayout(orientation="vertical")
@@ -90,11 +92,9 @@ class MainWindow(App):
 
         button_yes.bind(on_press=on_yes)
 
-        button_no.bind(on_press=popup.dismiss)
+        button_no.bind(on_press=on_no)
 
         popup.open()
-
-        return result
 
     def employees_on_site(self):
 
@@ -131,6 +131,9 @@ class MainWindow(App):
                 )
             else:
                 self.pop_up_message("Clock-in canceled by user.")
+                self.location_spinner.text = (
+                    "select a location"  # reset the spinner text
+                )
 
         # if a location has been selected
         if self.location_spinner.text != "Select a location":
