@@ -33,6 +33,8 @@ class EmployeeListWindow(Screen):
             on_press=lambda instance: self.update_table("clocked out")
         )
 
+        self.bind(on_enter=lambda instance: self.update_table("all"))
+
         self.add_widget(self.main_layout)
 
     def reset_nav(self, instance, text):
