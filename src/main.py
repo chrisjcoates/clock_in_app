@@ -10,16 +10,17 @@ class ClockingApp(App):
 
         self.title = "Clocking-in/out System"
 
-        sm = ScreenManager()
-        sm.transition = NoTransition()
+        screen_mananger = ScreenManager()
+        screen_mananger.transition = NoTransition()
 
-        sm.add_widget(MainWindow(name="main_window"))
-        sm.add_widget(EmployeeListWindow(name="employee_list_window"))
-        sm.add_widget(AddEmployees(name="add_employees"))
+        screen_mananger.add_widget(MainWindow(name="main_window"))
+        screen_mananger.add_widget(
+            EmployeeListWindow(name="employee_list_window"))
+        screen_mananger.add_widget(AddEmployees(name="add_employees"))
 
-        sm.current = "main_window"
+        screen_mananger.current = "main_window"
 
-        return sm
+        return screen_mananger
 
 
 if __name__ == "__main__":
