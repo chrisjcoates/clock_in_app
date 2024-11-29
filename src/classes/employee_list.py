@@ -101,13 +101,16 @@ class EmployeeListWindow(Screen):
         container.add_widget(header_layout)
 
         headers = [
-            "ID",
             "First Name",
             "Last Name",
             "Location",
             "Clocked-in",
             "Timestamp",
         ]
+
+        id_label = Label(text='ID', size_hint=(None, 1), width=100)
+        id_label.color = (0, 0, 0, 1)
+        header_layout.add_widget(id_label)
 
         for header in headers:
             label = Label(text=header, size_hint=(1, None))
@@ -119,7 +122,8 @@ class EmployeeListWindow(Screen):
         label_list = []
 
         for employee in employees:
-            emp_id = Label(text=str(employee[0]), color=(0, 0, 0, 1))
+            emp_id = Label(text=str(employee[0]), color=(
+                0, 0, 0, 1), size_hint=(None, 1), width=100)
             f_name = Label(text=employee[1], color=(0, 0, 0, 1))
             l_name = Label(text=employee[2], color=(0, 0, 0, 1))
             location = Label(text=employee[3], color=(0, 0, 0, 1))
