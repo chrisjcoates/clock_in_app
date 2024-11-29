@@ -14,18 +14,21 @@ class EmployeeListWindow(Screen):
 
         self.database = Database()
 
-        self.main_layout = BoxLayout(orientation="vertical", spacing=0, padding=0)
+        self.main_layout = BoxLayout(
+            orientation="vertical", spacing=0, padding=0)
         self.square_background(self.main_layout, (1, 1, 1, 1))
         self.main_layout.bind(size=self.layout_bg, pos=self.layout_bg)
 
-        self.second_layout = BoxLayout(orientation="vertical", padding=0, spacing=0)
+        self.second_layout = BoxLayout(
+            orientation="vertical", padding=0, spacing=0)
 
         self.second_layout.add_widget(self.create_button_container())
         self.second_layout.add_widget(self.create_table_container("all"))
         self.main_layout.add_widget(self.create_nav())
         self.main_layout.add_widget(self.second_layout)
 
-        self.all_button.bind(on_press=lambda instance: self.update_table("all"))
+        self.all_button.bind(
+            on_press=lambda instance: self.update_table("all"))
         self.clocked_in_button.bind(
             on_press=lambda instance: self.update_table("clocked in")
         )
@@ -44,8 +47,8 @@ class EmployeeListWindow(Screen):
 
         original_text = text
 
-        if original_text == "Employee List":
-            self.manager.current = "employee_list_window"
+        if original_text == "Add Employee":
+            self.manager.current = "add_employees"
         elif original_text == "Clock-in/out":
             self.manager.current = "main_window"
 
@@ -58,7 +61,8 @@ class EmployeeListWindow(Screen):
         container.size_hint = (1, None)
         container.height = 100
 
-        self.nav_spinner = Spinner(text="Menu", values=["Clock-in/out", "Add Employee"])
+        self.nav_spinner = Spinner(
+            text="Menu", values=["Clock-in/out", "Add Employee"])
         self.nav_spinner.bind(text=self.switch_screen)
         container.add_widget(self.nav_spinner)
 
@@ -119,10 +123,11 @@ class EmployeeListWindow(Screen):
             f_name = Label(text=employee[1], color=(0, 0, 0, 1))
             l_name = Label(text=employee[2], color=(0, 0, 0, 1))
             location = Label(text=employee[3], color=(0, 0, 0, 1))
-            clocked_in = Label(text=employee[4], color=(0, 0, 0, 1))
-            timestamp = Label(text="time stamp", color=(0, 0, 0, 1))
+            clocked_in = Label(text=employee[7], color=(0, 0, 0, 1))
+            timestamp = Label(text=employee[8], color=(0, 0, 0, 1))
 
-            label_list.append([emp_id, f_name, l_name, location, clocked_in, timestamp])
+            label_list.append(
+                [emp_id, f_name, l_name, location, clocked_in, timestamp])
 
         for row in label_list:
             employee_layout = BoxLayout(orientation="horizontal", spacing=0)

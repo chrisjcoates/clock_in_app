@@ -22,6 +22,9 @@ class Database:
                 first_name TEXT NOT NULL,
                 last_name TEXT NOT NULL,
                 location TEXT,
+                department TEXT NOT NULL,
+                shift_start TEXT NOT NULL,
+                shift_end TEXT NOT NULL,
                 clocked_in TEXT,
                 timestamp TEXT
                 )
@@ -204,7 +207,7 @@ class Database:
                     "ID": str(record[0]),
                     "Name": record[1] + " " + record[2],
                     "Location": record[3],
-                    "Clocked_in": record[4],
+                    "Clocked_in": record[7],
                 }
         except Exception as e:
             print(e)

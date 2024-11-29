@@ -21,9 +21,11 @@ class MainWindow(Screen):
         main_layout = BoxLayout(orientation="vertical", spacing=20)
         # Set background colour of window
         self.square_background(main_layout, (1, 1, 1, 1))
-        main_layout.bind(size=self.update_container_bg, pos=self.update_container_bg)
+        main_layout.bind(size=self.update_container_bg,
+                         pos=self.update_container_bg)
 
-        second_layout = BoxLayout(orientation="vertical", padding=25, spacing=20)
+        second_layout = BoxLayout(
+            orientation="vertical", padding=25, spacing=20)
 
         # Add containers to main layout
         main_layout.add_widget(self.create_nav())
@@ -40,7 +42,8 @@ class MainWindow(Screen):
     def create_nav(self):
         container = BoxLayout(orientation="vertical")
         self.square_background(container, (0.129, 0.129, 0.129, 1))
-        container.bind(size=self.update_container_bg, pos=self.update_container_bg)
+        container.bind(size=self.update_container_bg,
+                       pos=self.update_container_bg)
         container.size_hint = (1, None)
         container.height = 100
 
@@ -58,7 +61,8 @@ class MainWindow(Screen):
         # create rectangle for background colour
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
         # set rectangle size and position to window size / pos
-        container.bind(size=self.update_container_bg, pos=self.update_container_bg)
+        container.bind(size=self.update_container_bg,
+                       pos=self.update_container_bg)
         # Set details label text and create label
         details_text = "Company: Pendle Doors"
         self.details_label = Label(text=details_text, color=(0, 0, 0, 1))
@@ -76,7 +80,8 @@ class MainWindow(Screen):
         # create rectanle for background colour
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
         # set rectangle size and postition to window size / pos
-        container.bind(size=self.update_container_bg, pos=self.update_container_bg)
+        container.bind(size=self.update_container_bg,
+                       pos=self.update_container_bg)
         # Create spinner (combobox) set values and defsutl value
         self.location_spinner = Spinner(values=["Mill Bank", "Moss Fold"])
         self.location_spinner.text = "Select a location"
@@ -91,7 +96,8 @@ class MainWindow(Screen):
         # add rectangle for background colour
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
         # set rectangle size and position to window size / pos
-        container.bind(size=self.update_container_bg, pos=self.update_container_bg)
+        container.bind(size=self.update_container_bg,
+                       pos=self.update_container_bg)
 
         # crete employee id input
         id_input_label = Label(text="Enter employee ID to clock in.")
@@ -123,7 +129,8 @@ class MainWindow(Screen):
         container = BoxLayout(orientation="vertical")
         # add rectangle for background colour
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
-        container.bind(size=self.update_container_bg, pos=self.update_container_bg)
+        container.bind(size=self.update_container_bg,
+                       pos=self.update_container_bg)
 
         # create message lable
         self.message_label = Label(color=(0, 0, 0, 1))
@@ -145,7 +152,7 @@ class MainWindow(Screen):
             self.manager.current = "employee_list_window"
 
         elif original_text == "Add Employee":
-            pass
+            self.manager.current = 'add_employees'
 
         self.reset_nav(instance, text)
 
@@ -189,9 +196,11 @@ class MainWindow(Screen):
         button_layout = BoxLayout(orientation="horizontal")
 
         if direction == "in":
-            message_text = f"You are about to clock in {name}, is this correct?"
+            message_text = f"You are about to clock in {
+                name}, is this correct?"
         else:
-            message_text = f"You are about to clock out {name}, is this correct?"
+            message_text = f"You are about to clock out {
+                name}, is this correct?"
 
         message_label = Label(text=message_text)
 
@@ -240,7 +249,8 @@ class MainWindow(Screen):
                 # Clock in user
                 database.clock_in(self.location_spinner.text, employee["ID"])
                 # Set clock in message
-                message = f"{employee['Name']} has just clocked in at {self.location_spinner.text}"
+                message = f"{employee['Name']} has just clocked in at {
+                    self.location_spinner.text}"
                 self.id_input.text = ""  # Clear id input
                 self.pop_up_message(message)  # execute popup with message
                 self.employees_on_site()  # re-count employees on sites for details container
@@ -270,9 +280,11 @@ class MainWindow(Screen):
                         )
                     else:
                         # if user already clocked in set message
-                        message = f"{employee['Name']} is already clocked in at {self.location_spinner.text}."
+                        message = f"{employee['Name']} is already clocked in at {
+                            self.location_spinner.text}."
                         self.id_input.text = ""  # clear id input
-                        self.pop_up_message(message)  # execute popup with message
+                        # execute popup with message
+                        self.pop_up_message(message)
 
                     self.employees_on_site()  # re-count employees on sites
             else:
@@ -312,7 +324,8 @@ class MainWindow(Screen):
                 # and if they are clocked in
                 if database.check_clocked_in(employee["ID"]):
                     # Pop up for confirmation of user clock in
-                    self.pop_up_user_check(employee["Name"], "in", user_check_response)
+                    self.pop_up_user_check(
+                        employee["Name"], "in", user_check_response)
                 else:
                     # if user already clocked in set message
                     message = f"{employee['Name']} is already clocked out."
@@ -327,7 +340,8 @@ class MainWindow(Screen):
         # using layot provided set colour and create rounded rectangle
         with layout.canvas.before:
             Color(*colour)
-            layout.bg = RoundedRectangle(size=layout.size, pos=layout.pos, radius=[20])
+            layout.bg = RoundedRectangle(
+                size=layout.size, pos=layout.pos, radius=[20])
 
     def square_background(self, layout, colour):
         # using the provided layout
