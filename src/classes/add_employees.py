@@ -6,6 +6,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.graphics import Rectangle, Color, RoundedRectangle
 from kivy.uix.spinner import Spinner
 from kivy.uix.gridlayout import GridLayout
+from classes.database import Database
 
 
 class AddEmployees(Screen):
@@ -13,6 +14,7 @@ class AddEmployees(Screen):
         super().__init__(**kwargs)
 
         self.title = "Add Employees"
+        self.database = Database()
 
         main_layout = BoxLayout(orientation="vertical", spacing=0, padding=0)
         self.square_background(main_layout, (1, 1, 1, 1))
@@ -30,6 +32,15 @@ class AddEmployees(Screen):
         main_layout.add_widget(second_layout)
 
         self.add_widget(main_layout)
+
+    def clear_employee(self, instance):
+        self.f_name_input.text = ''
+        self.l_name_input.text = ''
+        self.dept_input.text = ''
+        self.s_start_hour.text = "08"
+        self.s_start_mins.text = "00"
+        self.s_end_hour.text = "17"
+        self.s_end_mins.text = "00"
 
     def reset_nav(self, instance, text):
         instance.text = "Menu"
@@ -71,6 +82,7 @@ class AddEmployees(Screen):
 
         create_button = Button(text="Create")
         clear_button = Button(text="Clear")
+        clear_button.bind(on_press=self.clear_employee)
         container.add_widget(create_button)
         container.add_widget(clear_button)
 
@@ -106,14 +118,14 @@ class AddEmployees(Screen):
 
             label_container.add_widget(new_label)
 
-        f_name_input = TextInput(
+        self.f_name_input = TextInput(
             size_hint=(1, None), height=80, padding=(10, 10, 10, 10)
         )
-        f_name_input.multiline = False
-        f_name_input.font_size = 40
-        l_name_input = TextInput(size_hint=(1, None), height=80)
-        l_name_input.multiline = False
-        l_name_input.font_size = 40
+        self.f_name_input.multiline = False
+        self.f_name_input.font_size = 40
+        self.l_name_input = TextInput(size_hint=(1, None), height=80)
+        self.l_name_input.multiline = False
+        self.l_name_input.font_size = 40
 
         departments = [
             "Sales",
@@ -127,32 +139,32 @@ class AddEmployees(Screen):
             "Logistics",
         ]
         departments.sort()
-        dept_input = Spinner(values=departments,
-                             size_hint=(1, None), height=80)
+        self.dept_input = Spinner(values=departments,
+                                  size_hint=(1, None), height=80)
 
         am = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09"]
         hours = am + [str(n) for n in range(10, 25)]
         minutes = am + [str(n) for n in range(10, 61)]
 
-        s_start_hour = Spinner(text="08:00", values=hours,
-                               size_hint=(1, None), height=80)
-        s_end_hour = Spinner(text="17:00", values=hours,
-                             size_hint=(1, None), height=80)
-        s_start_mins = Spinner(text="00:00", values=minutes,
-                               size_hint=(1, None), height=80)
-        s_end_mins = Spinner(text="00:00", values=minutes,
-                             size_hint=(1, None), height=80)
+        self.s_start_hour = Spinner(text="08", values=hours,
+                                    size_hint=(1, None), height=80)
+        self.s_end_hour = Spinner(text="17", values=hours,
+                                  size_hint=(1, None), height=80)
+        self.s_start_mins = Spinner(text="00", values=minutes,
+                                    size_hint=(1, None), height=80)
+        self.s_end_mins = Spinner(text="00", values=minutes,
+                                  size_hint=(1, None), height=80)
 
-        input_container.add_widget(f_name_input)
-        input_container.add_widget(l_name_input)
-        input_container.add_widget(dept_input)
-        input_container.add_widget(s_start_hour)
-        input_container.add_widget(s_end_hour)
+        input_container.add_widget(self.f_name_input)
+        input_container.add_widget(self.l_name_input)
+        input_container.add_widget(self.dept_input)
+        input_container.add_widget(self.s_start_hour)
+        input_container.add_widget(self.s_end_hour)
         input_container2.add_widget(Label(size_hint=(1, None), height=80))
         input_container2.add_widget(Label(size_hint=(1, None), height=80))
         input_container2.add_widget(Label(size_hint=(1, None), height=80))
-        input_container2.add_widget(s_start_mins)
-        input_container2.add_widget(s_end_mins)
+        input_container2.add_widget(self.s_start_mins)
+        input_container2.add_widget(self.s_end_mins)
 
         container.add_widget(label_container)
         container.add_widget(input_container)

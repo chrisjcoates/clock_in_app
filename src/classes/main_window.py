@@ -16,6 +16,7 @@ class MainWindow(Screen):
         super().__init__(**kwargs)
 
         self.title = "Pendle Doors Clock-in System"
+        self.database = Database()
 
         # Set main layout of window
         main_layout = BoxLayout(orientation="vertical", spacing=20)
@@ -99,7 +100,7 @@ class MainWindow(Screen):
         container.bind(size=self.update_container_bg,
                        pos=self.update_container_bg)
 
-        # crete employee id input
+        # create employee id input
         id_input_label = Label(text="Enter employee ID to clock in.")
         id_input_label.color = (0, 0, 0, 1)
         self.id_input = TextInput()
@@ -224,11 +225,8 @@ class MainWindow(Screen):
         popup.open()
 
     def employees_on_site(self):
-
-        # Open database
-        database = Database()
         # Run count function for number of employees at sites
-        employees_onsite = database.count_employess_on_site()
+        employees_onsite = self.database.count_employess_on_site()
 
         # Get values of employees at each site
         self.mill_bank_on_site = employees_onsite["Mill Bank"]
@@ -247,7 +245,8 @@ class MainWindow(Screen):
             """Handles response to pop up yes or no button selection"""
             if response:  # if response is true
                 # Clock in user
-                database.clock_in(self.location_spinner.text, employee["ID"])
+                self.database.clock_in(
+                    self.location_spinner.text, employee["ID"])
                 # Set clock in message
                 message = f"{employee['Name']} has just clocked in at {
                     self.location_spinner.text}"
@@ -266,14 +265,12 @@ class MainWindow(Screen):
         # if a location has been selected
         if self.id_input.text != "":
             if self.location_spinner.text != "Select a location":
-                # Open database
-                database = Database()
                 # Get employee details
-                employee = database.employee_details(self.id_input.text)
+                employee = self.database.employee_details(self.id_input.text)
                 # if employee is found
                 if employee is not None:
                     # and if they are not already clocked in
-                    if not database.check_clocked_in(employee["ID"]):
+                    if not self.database.check_clocked_in(employee["ID"]):
                         # Pop up for confirmation of user clock in
                         self.pop_up_user_check(
                             employee["Name"], "in", user_check_response
@@ -299,7 +296,7 @@ class MainWindow(Screen):
             """Handles response to pop up yes or no button selection"""
             if response:  # if response is true
                 # Clock out user
-                database.clock_out(employee["ID"])
+                self.database.clock_out(employee["ID"])
                 # Set clock out message
                 message = f"{employee['Name']} has just clocked out."
                 self.id_input.text = ""  # Clear id input
@@ -315,14 +312,12 @@ class MainWindow(Screen):
                 )
 
         if self.id_input.text != "":
-            # Open database
-            database = Database()
             # Get employee details
-            employee = database.employee_details(self.id_input.text)
+            employee = self.database.employee_details(self.id_input.text)
             # if employee is found
             if employee is not None:
                 # and if they are clocked in
-                if database.check_clocked_in(employee["ID"]):
+                if self.database.check_clocked_in(employee["ID"]):
                     # Pop up for confirmation of user clock in
                     self.pop_up_user_check(
                         employee["Name"], "in", user_check_response)
