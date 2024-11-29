@@ -33,7 +33,24 @@ class AddEmployees(Screen):
 
         self.add_widget(main_layout)
 
-    def clear_employee(self, instance):
+    def create_employee(self, instance):
+        f_name = self.f_name_input.text.capitalize()
+        l_name = self.l_name_input.text.capitalize()
+        dept = self.dept_input.text.capitalize()
+        s_start = f"{self.s_start_hour.text}:{self.s_start_mins.text}"
+        s_end = f"{self.s_end_hour.text}:{self.s_end_mins.text}"
+
+        if f_name and l_name and dept:
+            if isinstance(f_name, str) and isinstance(l_name, str) and isinstance(dept, str):
+                self.database.create_employee(
+                    f_name, l_name, dept, s_start, s_end)
+                self.clear_employee()
+            else:
+                print("Employee details include invalid characters.")
+        else:
+            print('Employee details missing')
+
+    def clear_employee(self, instance=None):
         self.f_name_input.text = ''
         self.l_name_input.text = ''
         self.dept_input.text = ''
@@ -81,6 +98,7 @@ class AddEmployees(Screen):
         container.height = 200
 
         create_button = Button(text="Create")
+        create_button.bind(on_press=self.create_employee)
         clear_button = Button(text="Clear")
         clear_button.bind(on_press=self.clear_employee)
         container.add_widget(create_button)

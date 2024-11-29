@@ -186,8 +186,8 @@ class Database:
         self.connect_to_db()
 
         sql_query = """
-        INSERT INTO employees (first_name, last_name, department, shift_start, shift_end)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO employees (first_name, last_name, department, shift_start, shift_end, location, timestamp, clocked_in)
+        VALUES (?, ?, ?, ?, ?, '', '', 'False')
         """
         try:
             self.cursor.execute(
