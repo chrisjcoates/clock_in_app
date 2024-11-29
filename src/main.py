@@ -1,11 +1,13 @@
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, NoTransition
 from classes.main_window import MainWindow
-from classes.employee_list_window import EmployeeListWindow
+from classes.employee_list import EmployeeListWindow
 
 
-class ScreenSwitcherApp(App):
+class ClockingApp(App):
     def build(self):
+
+        self.title = "Clocking-in/out System"
 
         sm = ScreenManager()
         sm.transition = NoTransition()
@@ -19,7 +21,7 @@ class ScreenSwitcherApp(App):
 
 
 if __name__ == "__main__":
-    window = ScreenSwitcherApp()
+    window = ClockingApp()
     window.run()
 
 

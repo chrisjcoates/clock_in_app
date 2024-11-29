@@ -302,23 +302,26 @@ class MainWindow(Screen):
                     "Select a location"  # reset the spinner text
                 )
 
-        # Open database
-        database = Database()
-        # Get employee details
-        employee = database.employee_details(self.id_input.text)
-        # if employee is found
-        if employee is not None:
-            # and if they are clocked in
-            if database.check_clocked_in(employee["ID"]):
-                # Pop up for confirmation of user clock in
-                self.pop_up_user_check(employee["Name"], "in", user_check_response)
-            else:
-                # if user already clocked in set message
-                message = f"{employee['Name']} is already clocked out."
-                self.id_input.text = ""  # clear id input
-                self.pop_up_message(message)  # execute popup with message
+        if self.id_input.text != "":
+            # Open database
+            database = Database()
+            # Get employee details
+            employee = database.employee_details(self.id_input.text)
+            # if employee is found
+            if employee is not None:
+                # and if they are clocked in
+                if database.check_clocked_in(employee["ID"]):
+                    # Pop up for confirmation of user clock in
+                    self.pop_up_user_check(employee["Name"], "in", user_check_response)
+                else:
+                    # if user already clocked in set message
+                    message = f"{employee['Name']} is already clocked out."
+                    self.id_input.text = ""  # clear id input
+                    self.pop_up_message(message)  # execute popup with message
 
-            self.employees_on_site()  # re-count employees on sites
+                self.employees_on_site()  # re-count employees on sites
+        else:
+            self.pop_up_message("No ID input.")
 
     def rounded_background(self, layout, colour):
         # using layot provided set colour and create rounded rectangle
