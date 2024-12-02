@@ -6,12 +6,15 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.graphics import Rectangle, Color, RoundedRectangle
 from kivy.uix.spinner import Spinner
 from kivy.uix.gridlayout import GridLayout
+from kivy.core.window import Window
 from classes.database import Database
 
 
 class AddEmployees(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+        self.padding_value = Window.width * 0.02
 
         self.title = "Add Employees"
         self.database = Database()
@@ -25,8 +28,6 @@ class AddEmployees(Screen):
             orientation="vertical", spacing=20, padding=20)
 
         second_layout.add_widget(self.create_input_container())
-        second_layout.add_widget(self.create_button_container())
-        second_layout.add_widget(BoxLayout())
 
         main_layout.add_widget(self.create_nav())
         main_layout.add_widget(second_layout)
@@ -36,9 +37,9 @@ class AddEmployees(Screen):
     def create_employee(self, instance):
         f_name = self.f_name_input.text.capitalize()
         l_name = self.l_name_input.text.capitalize()
-        dept = self.dept_input.text.capitalize()
-        s_start = f"{self.s_start_hour.text}:{self.s_start_mins.text}"
-        s_end = f"{self.s_end_hour.text}:{self.s_end_mins.text}"
+        dept = self.dept_spinner.text.capitalize()
+        s_start = f"{self.s_hours_spinner.text}:{self.s_mins_spinner.text}"
+        s_end = f"{self.e_hours_spinner.text}:{self.e_mins_spinner.text}"
 
         if f_name and l_name and dept:
             if isinstance(f_name, str) and isinstance(l_name, str) and isinstance(dept, str):
@@ -53,11 +54,11 @@ class AddEmployees(Screen):
     def clear_employee(self, instance=None):
         self.f_name_input.text = ''
         self.l_name_input.text = ''
-        self.dept_input.text = ''
-        self.s_start_hour.text = "08"
-        self.s_start_mins.text = "00"
-        self.s_end_hour.text = "17"
-        self.s_end_mins.text = "00"
+        self.dept_spinner.text = ''
+        self.s_hours_spinner.text = "08"
+        self.s_mins_spinner.text = "00"
+        self.e_hours_spinner.text = "17"
+        self.e_mins_spinner.text = "00"
 
     def reset_nav(self, instance, text):
         instance.text = "Menu"
@@ -80,7 +81,7 @@ class AddEmployees(Screen):
         container.bind(size=self.update_container_bg,
                        pos=self.update_container_bg)
         container.size_hint = (1, None)
-        container.height = 100
+        container.height = 80
 
         nav_spinner = Spinner(text="Menu", values=[
                               "Clock-in/out", "Employee List"])
@@ -89,109 +90,104 @@ class AddEmployees(Screen):
 
         return container
 
-    def create_button_container(self):
-        container = BoxLayout(orientation="vertical", spacing=20, padding=20)
-        self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
-        container.bind(size=self.update_container_bg,
-                       pos=self.update_container_bg)
-        container.size_hint = (1, None)
-        container.height = 200
-
-        create_button = Button(text="Create")
-        create_button.bind(on_press=self.create_employee)
-        clear_button = Button(text="Clear")
-        clear_button.bind(on_press=self.clear_employee)
-        container.add_widget(create_button)
-        container.add_widget(clear_button)
-
-        return container
-
     def create_input_container(self):
-        main_c_layout = BoxLayout(orientation='vertical')
-        self.rounded_background(main_c_layout, (0.7, 0.7, 0.7, 0.7))
-        main_c_layout.bind(size=self.update_container_bg,
+
+        main_layout = BoxLayout(orientation="vertical",
+                                padding=self.padding_value, spacing=20)
+
+        details_layout = GridLayout(
+            cols=2, padding=(20, 20, 50, 20), spacing=20)
+        self.rounded_background(details_layout, (0.7, 0.7, 0.7, 0.7))
+        details_layout.bind(size=self.update_container_bg,
+                            pos=self.update_container_bg)
+
+        details_layout.size_hint = (1, None)
+        details_layout.height = 250
+
+        shift_layout = GridLayout(
+            cols=3, padding=(20, 20, 50, 20), spacing=20)
+        shift_layout.size_hint = (1, None)
+        shift_layout.height = 200
+
+        self.rounded_background(shift_layout, (0.7, 0.7, 0.7, 0.7))
+        shift_layout.bind(size=self.update_container_bg,
+                          pos=self.update_container_bg)
+
+        button_layout = BoxLayout(
+            orientation="horizontal", padding=(50, 20, 50, 20), spacing=20)
+        self.rounded_background(button_layout, (0.7, 0.7, 0.7, 0.7))
+        button_layout.bind(size=self.update_container_bg,
                            pos=self.update_container_bg)
 
-        container = BoxLayout(orientation="horizontal",
-                              spacing=20, padding=(100, 0, 100, 100))
+        button_layout.size_hint = (1, None)
+        button_layout.height = 100
 
-        title_label = Label(text="Fill out the below to add a new employee",
-                            size_hint=(1, None), height=80, color=(0, 0, 0, 1))
+        f_name_label = Label(text="First Name", color=(
+            0, 0, 0, 1), size_hint=(1, None), height=60)
+        l_name_label = Label(text="Last Name", color=(
+            0, 0, 0, 1), size_hint=(1, None), height=60)
+        dept_label = Label(text="Department", color=(
+            0, 0, 0, 1), size_hint=(1, None), height=60)
 
-        label_container = GridLayout(cols=1, spacing=20, padding=20)
-        label_container.size_hint = (None, 1)
-        label_container.width = 300
-        input_container = GridLayout(cols=1, spacing=20, padding=20)
-        input_container2 = GridLayout(cols=1, spacing=20, padding=20)
-
-        labels = ["First name", "Last name",
-                  "Department", "Shift start", "Shift end"]
-
-        for label in labels:
-            new_label = Label(text=label)
-            new_label.color = (0, 0, 0, 1)
-            new_label.size_hint = (None, None)
-            new_label.height = 80
-            new_label.width = 300
-
-            label_container.add_widget(new_label)
-
-        self.f_name_input = TextInput(
-            size_hint=(1, None), height=80, padding=(10, 10, 10, 10)
-        )
+        self.f_name_input = TextInput(size_hint=(1, None), height=60)
         self.f_name_input.multiline = False
-        self.f_name_input.font_size = 40
-        self.l_name_input = TextInput(size_hint=(1, None), height=80)
+        self.f_name_input.font_size = 25
+        self.l_name_input = TextInput(size_hint=(1, None), height=60)
         self.l_name_input.multiline = False
-        self.l_name_input.font_size = 40
+        self.l_name_input.font_size = 25
 
-        departments = [
-            "Sales",
-            "Veneer Line",
-            "CNC",
-            "Rework",
-            "Bespoke",
-            "Paint",
-            "Technical",
-            "Directors",
-            "Logistics",
-        ]
-        departments.sort()
-        self.dept_input = Spinner(values=departments,
-                                  size_hint=(1, None), height=80)
+        spin_values = ['Bespoke', 'Rework', 'Paint',
+                       'Logistics', 'Technical', 'Directors', 'Sales', 'CNC']
+        spin_values.sort()
+        self.dept_spinner = Spinner(
+            text="Select department", values=spin_values, size_hint=(1, None), height=60)
 
-        am = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09"]
-        hours = am + [str(n) for n in range(10, 25)]
-        minutes = am + [str(n) for n in range(10, 61)]
+        s_start_label = Label(text="Shift start", color=(0, 0, 0, 1))
+        s_end_label = Label(text="Shift end", color=(0, 0, 0, 1))
 
-        self.s_start_hour = Spinner(text="08", values=hours,
-                                    size_hint=(1, None), height=80)
-        self.s_end_hour = Spinner(text="17", values=hours,
-                                  size_hint=(1, None), height=80)
-        self.s_start_mins = Spinner(text="00", values=minutes,
-                                    size_hint=(1, None), height=80)
-        self.s_end_mins = Spinner(text="00", values=minutes,
-                                  size_hint=(1, None), height=80)
+        nums = ['00', '01', "02", "03", "04", "05", "06", "07", "08", "09"]
 
-        input_container.add_widget(self.f_name_input)
-        input_container.add_widget(self.l_name_input)
-        input_container.add_widget(self.dept_input)
-        input_container.add_widget(self.s_start_hour)
-        input_container.add_widget(self.s_end_hour)
-        input_container2.add_widget(Label(size_hint=(1, None), height=80))
-        input_container2.add_widget(Label(size_hint=(1, None), height=80))
-        input_container2.add_widget(Label(size_hint=(1, None), height=80))
-        input_container2.add_widget(self.s_start_mins)
-        input_container2.add_widget(self.s_end_mins)
+        spinner_hours = nums + [str(n) for n in range(10, 24)]
+        spinner_mins = nums + [str(n) for n in range(10, 61)]
 
-        container.add_widget(label_container)
-        container.add_widget(input_container)
-        container.add_widget(input_container2)
+        self.s_hours_spinner = Spinner(text="08",
+                                       values=spinner_hours, size_hint=(1, None), height=60)
+        self.s_mins_spinner = Spinner(text="00",
+                                      values=spinner_mins, size_hint=(1, None), height=60)
 
-        main_c_layout.add_widget(title_label)
-        main_c_layout.add_widget(container)
+        self.e_hours_spinner = Spinner(text="17",
+                                       values=spinner_hours, size_hint=(1, None), height=60)
+        self.e_mins_spinner = Spinner(text="00",
+                                      values=spinner_mins, size_hint=(1, None), height=60)
 
-        return main_c_layout
+        submit_button = Button(text='Submit', size_hint=(1, None), height=60)
+        submit_button.bind(on_press=self.create_employee)
+        clear_button = Button(text="Clear", size_hint=(1, None), height=60)
+        clear_button.bind(on_press=self.clear_employee)
+
+        details_layout.add_widget(f_name_label)
+        details_layout.add_widget(self.f_name_input)
+        details_layout.add_widget(l_name_label)
+        details_layout.add_widget(self.l_name_input)
+        details_layout.add_widget(dept_label)
+        details_layout.add_widget(self.dept_spinner)
+
+        shift_layout.add_widget(s_start_label)
+        shift_layout.add_widget(self.s_hours_spinner)
+        shift_layout.add_widget(self.s_mins_spinner)
+        shift_layout.add_widget(s_end_label)
+        shift_layout.add_widget(self.e_hours_spinner)
+        shift_layout.add_widget(self.e_mins_spinner)
+
+        button_layout.add_widget(submit_button)
+        button_layout.add_widget(clear_button)
+
+        main_layout.add_widget(details_layout)
+        main_layout.add_widget(shift_layout)
+        main_layout.add_widget(button_layout)
+        main_layout.add_widget(BoxLayout())
+
+        return main_layout
 
     def rounded_background(self, layout, colour):
         # using layot provided set colour and create rounded rectangle
