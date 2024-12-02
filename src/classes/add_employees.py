@@ -6,6 +6,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.graphics import Rectangle, Color, RoundedRectangle
 from kivy.uix.spinner import Spinner
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.popup import Popup
 from classes.database import Database
 
 
@@ -42,9 +43,13 @@ class AddEmployees(Screen):
 
         if f_name and l_name and dept:
             if isinstance(f_name, str) and isinstance(l_name, str) and isinstance(dept, str):
-                self.database.create_employee(
-                    f_name, l_name, dept, s_start, s_end)
-                self.clear_employee()
+                try:
+                    self.database.create_employee(
+                        f_name, l_name, dept, s_start, s_end)
+                    self.clear_employee()
+                    self.pop_up_message("Employee Created")
+                except Exception as e:
+                    print("Error creating new employee.")
             else:
                 print("Employee details include invalid characters.")
         else:
@@ -192,6 +197,27 @@ class AddEmployees(Screen):
         main_c_layout.add_widget(container)
 
         return main_c_layout
+
+    def pop_up_message(self, message):
+
+        popup_layout = BoxLayout(orientation="vertical")
+
+        message_label = Label(text=message)
+        close_button = Button(text="Close")
+
+        popup_layout.add_widget(message_label)
+        popup_layout.add_widget(close_button)
+
+        popup = Popup(
+            title="Message",
+            content=popup_layout,
+            size_hint=(None, None),
+            size=(900, 300),
+        )
+
+        popup.open()
+
+        close_button.bind(on_press=popup.dismiss)
 
     def rounded_background(self, layout, colour):
         # using layot provided set colour and create rounded rectangle
