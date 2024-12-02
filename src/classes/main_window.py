@@ -193,7 +193,7 @@ class MainWindow(Screen):
             title="Message",
             content=popup_layout,
             size_hint=(None, None),
-            size=(900, 300),
+            size=(500,300),
         )
 
         popup.open()
@@ -233,7 +233,7 @@ class MainWindow(Screen):
 
         popup = Popup(title="Message", content=popup_layout)
         popup.size_hint = (None, None)
-        popup.size = (900, 300)
+        popup.size = (500,300)
 
         button_yes.bind(on_press=on_yes)
 
