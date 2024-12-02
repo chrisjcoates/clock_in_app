@@ -209,9 +209,8 @@ class Database:
         """
         try:
             employee = self.cursor.execute(sql_query, (employee_id,))
-            print("Sucessfully retrieved employee details.")
         except Exception as e:
-            print("Failed to get employee details.", e)
+            print("Failed to get employee details from db.", e)
 
         details = None
 
@@ -226,9 +225,14 @@ class Database:
                     "Location": record[3],
                     "Clocked_in": record[7],
                 }
+                print("Sucessfully retrieved employee details from db.")
         except Exception as e:
             print(e)
 
         self.close_db_connection()
 
+        if not details:
+            print("No employee found with ID, employee details value is 'None'.")
+
         return details
+        
