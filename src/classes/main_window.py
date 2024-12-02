@@ -15,6 +15,7 @@ class MainWindow(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        # Set title and database object
         self.title = "Pendle Doors Clock-in System"
         self.database = Database()
 
@@ -41,27 +42,32 @@ class MainWindow(Screen):
         self.add_widget(main_layout)
 
     def create_nav(self):
+        """ Creates a layout for the navigation bar and adds dropdown widget """
+        # Create the layout & set the background colour
         container = BoxLayout(orientation="vertical")
         self.square_background(container, (0.129, 0.129, 0.129, 1))
         container.bind(size=self.update_container_bg,
                        pos=self.update_container_bg)
+        # Set layout height
         container.size_hint = (1, None)
         container.height = 100
 
+        # Create nav dropdown
         self.nav_spinner = Spinner(
             text="Menu", values=["Add Employee", "Employee List"]
         )
+        # bind scqitch screen func to dropdown selection
         self.nav_spinner.bind(text=self.switch_screen)
+        # Add widget to layout
         container.add_widget(self.nav_spinner)
 
         return container
 
     def create_details_container(self):
-        # set container layout
+        """ Creates a layout and adds widgets for the details section """
+        # Create layout & add background colour
         container = BoxLayout(orientation="vertical")
-        # create rectangle for background colour
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
-        # set rectangle size and position to window size / pos
         container.bind(size=self.update_container_bg,
                        pos=self.update_container_bg)
         # Set details label text and create label
@@ -73,6 +79,7 @@ class MainWindow(Screen):
         return container
 
     def create_location_container(self):
+        """ Creates a layout & adds widgets for the location selection """
         # create layout
         container = BoxLayout(orientation="vertical", padding=50)
         # set fixed height
@@ -83,7 +90,7 @@ class MainWindow(Screen):
         # set rectangle size and postition to window size / pos
         container.bind(size=self.update_container_bg,
                        pos=self.update_container_bg)
-        # Create spinner (combobox) set values and defsutl value
+        # Create spinner (combobox) set values and default value
         self.location_spinner = Spinner(values=["Mill Bank", "Moss Fold"])
         self.location_spinner.text = "Select a location"
         # add spinnder to layout
@@ -92,6 +99,7 @@ class MainWindow(Screen):
         return container
 
     def create_button_container(self):
+        """ Creates a layout and adds widgets for the clock-in/put buttons """
         # set container layout
         container = BoxLayout(orientation="vertical", padding=50, spacing=20)
         # add rectangle for background colour
@@ -100,7 +108,7 @@ class MainWindow(Screen):
         container.bind(size=self.update_container_bg,
                        pos=self.update_container_bg)
 
-        # create employee id input
+        # create employee id label & input
         id_input_label = Label(text="Enter employee ID to clock in.")
         id_input_label.color = (0, 0, 0, 1)
         self.id_input = TextInput()
@@ -108,11 +116,12 @@ class MainWindow(Screen):
         self.id_input.halign = "center"
         self.id_input.padding = (10, 10, 10, 10)
         self.id_input.font_size = 40
-        # Create clock in / out buttons
+        # Create clock in button
         clock_in_button = Button(text="Clock-in")
         clock_in_button.background_normal = ""
         clock_in_button.background_color = (56 / 255, 161 / 255, 24 / 255)
         clock_in_button.on_press = self.clock_in
+        # Create clock out button
         clock_out_button = Button(text="Clock-out")
         clock_out_button.background_normal = ""
         clock_out_button.background_color = (158 / 255, 28 / 255, 25 / 255)
@@ -143,48 +152,59 @@ class MainWindow(Screen):
         return container
 
     def reset_nav(self, instance, text):
+        """ Resets the navigation text for after selection """
         instance.text = "Menu"
 
     def switch_screen(self, instance, text):
-
+        """ Switches the screen based on instance text """
+        # get the text from the spinner
         original_text = text
 
+        # switches the screen based on the text
         if original_text == "Employee List":
             self.manager.current = "employee_list_window"
 
         elif original_text == "Add Employee":
             self.manager.current = 'add_employees'
 
+        # resets the nav text back to Menu
         self.reset_nav(instance, text)
 
     def pop_up_message(self, message, time=None):
-
+        """ Create a pop up box with meassage & timestamp if required """
+        # Create the layout
         popup_layout = BoxLayout(orientation="vertical")
 
+        # Alter message if timestamp has been passed into the function
         if time:
             message = f"{message} at {time}"
         else:
             message = message
 
+        # Create lable with message text
         message_label = Label(text=message)
+        # Create button to close popup
         close_button = Button(text="Close")
-
+        # Add widgets to layout
         popup_layout.add_widget(message_label)
         popup_layout.add_widget(close_button)
 
+        # Create popup object
         popup = Popup(
             title="Message",
             content=popup_layout,
             size_hint=(None, None),
             size=(900, 300),
         )
-
+        # open the popup object
         popup.open()
-
+        # close the popup on close button press
         close_button.bind(on_press=popup.dismiss)
 
     def pop_up_user_check(self, name, direction, callback):
+        """ creates a popup to check if you are about to clock in/out the intended person """
 
+        # Nested functions to set callback to True or False depending on the button press
         def on_yes(instance):
             callback(True)
             popup.dismiss()
@@ -192,39 +212,44 @@ class MainWindow(Screen):
         def on_no(instance):
             callback(False)
             popup.dismiss()
-
+        
+        # Create popup layouts
         popup_layout = BoxLayout(orientation="vertical")
         button_layout = BoxLayout(orientation="horizontal")
 
+        # Check direction passed into fucntion and set message accordingly
         if direction == "in":
-            message_text = f"You are about to clock in {
-                name}, is this correct?"
+            message_text = f"You are about to clock in {name}, is this correct?"
         else:
-            message_text = f"You are about to clock out {
-                name}, is this correct?"
-
+            message_text = f"You are about to clock out {name}, is this correct?"
+        
+        # Create message label
         message_label = Label(text=message_text)
 
+        # Create buttons
         button_yes = Button(text="Yes")
         button_no = Button(text="No")
 
+        # Add widgest to layout
         button_layout.add_widget(button_yes)
         button_layout.add_widget(button_no)
-
         popup_layout.add_widget(message_label)
         popup_layout.add_widget(button_layout)
 
+        # Create popup object
         popup = Popup(title="Message", content=popup_layout)
         popup.size_hint = (None, None)
         popup.size = (900, 300)
 
+        # bind the nested functions the the buttons
         button_yes.bind(on_press=on_yes)
-
         button_no.bind(on_press=on_no)
 
+        # Open the popup
         popup.open()
 
     def employees_on_site(self):
+        """ Get the number of employees for each site and update the details label """
         # Run count function for number of employees at sites
         employees_onsite = self.database.count_employess_on_site()
 
@@ -248,19 +273,14 @@ class MainWindow(Screen):
                 self.database.clock_in(
                     self.location_spinner.text, employee["ID"])
                 # Set clock in message
-                message = f"{employee['Name']} has just clocked in at {
-                    self.location_spinner.text}"
+                message = f"{employee['Name']} has just clocked in at {self.location_spinner.text}"
                 self.id_input.text = ""  # Clear id input
                 self.pop_up_message(message)  # execute popup with message
                 self.employees_on_site()  # re-count employees on sites for details container
-                self.location_spinner.text = (
-                    "Select a location"  # reset the spinner text
-                )
+                self.location_spinner.text = ("Select a location")  # reset the spinner text
             else:
                 self.pop_up_message("Clock-in canceled by user.")
-                self.location_spinner.text = (
-                    "Select a location"  # reset the spinner text
-                )
+                self.location_spinner.text = ("Select a location")  # reset the spinner text
 
         # if a location has been selected
         if self.id_input.text != "":
@@ -272,9 +292,7 @@ class MainWindow(Screen):
                     # and if they are not already clocked in
                     if not self.database.check_clocked_in(employee["ID"]):
                         # Pop up for confirmation of user clock in
-                        self.pop_up_user_check(
-                            employee["Name"], "in", user_check_response
-                        )
+                        self.pop_up_user_check(employee["Name"], "in", user_check_response)
                     else:
                         # if user already clocked in set message
                         message = f"{employee['Name']} is already clocked in at {
@@ -284,6 +302,8 @@ class MainWindow(Screen):
                         self.pop_up_message(message)
 
                     self.employees_on_site()  # re-count employees on sites
+                else:
+                    self.pop_up_message("No user with ID input.")
             else:
                 # display popup message if no location is selected
                 self.pop_up_message("Please select a location to clock in.")
@@ -319,8 +339,7 @@ class MainWindow(Screen):
                 # and if they are clocked in
                 if self.database.check_clocked_in(employee["ID"]):
                     # Pop up for confirmation of user clock in
-                    self.pop_up_user_check(
-                        employee["Name"], "in", user_check_response)
+                    self.pop_up_user_check(employee["Name"], "in", user_check_response)
                 else:
                     # if user already clocked in set message
                     message = f"{employee['Name']} is already clocked out."
@@ -328,15 +347,16 @@ class MainWindow(Screen):
                     self.pop_up_message(message)  # execute popup with message
 
                 self.employees_on_site()  # re-count employees on sites
+            else:
+                self.pop_up_message("No user with ID input.")
         else:
             self.pop_up_message("No ID input.")
 
     def rounded_background(self, layout, colour):
-        # using layot provided set colour and create rounded rectangle
+        # using layout passed into function set colour and create rounded rectangle
         with layout.canvas.before:
             Color(*colour)
-            layout.bg = RoundedRectangle(
-                size=layout.size, pos=layout.pos, radius=[20])
+            layout.bg = RoundedRectangle(size=layout.size, pos=layout.pos, radius=[20])
 
     def square_background(self, layout, colour):
         # using the provided layout
@@ -346,6 +366,7 @@ class MainWindow(Screen):
             layout.bg = Rectangle(size=layout.size, pos=layout.pos)
 
     def update_container_bg(self, instance, value):
+        # using the layout passed into function, set layout size to current instance size
         instance.bg.size = instance.size
         instance.bg.pos = instance.pos
 
