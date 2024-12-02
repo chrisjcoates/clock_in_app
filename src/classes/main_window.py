@@ -37,7 +37,7 @@ class MainWindow(Screen):
         second_layout.add_widget(self.create_details_container())
         self.employees_on_site()
         second_layout.add_widget(self.create_location_container())
-        second_layout.add_widget(BoxLayout(size_hint=(1, None), height=100))
+        second_layout.add_widget(BoxLayout(size_hint=(1, None), height=50))
         second_layout.add_widget(self.create_button_container())
         second_layout.add_widget(self.create_message_container())
 
