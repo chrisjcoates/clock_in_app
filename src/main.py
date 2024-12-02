@@ -1,3 +1,4 @@
+from kivy.config import Config
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, NoTransition
 from kivy.core.window import Window
@@ -9,7 +10,7 @@ from classes.add_employees import AddEmployees
 class ClockingApp(App):
     def build(self):
 
-        Window.size = (800, Window.height)
+        Window.size = (800, 1280)
 
         self.title = "Clocking-in/out System"
 

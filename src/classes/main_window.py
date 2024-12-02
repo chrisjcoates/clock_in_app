@@ -7,6 +7,7 @@ from kivy.uix.screenmanager import Screen
 from kivy.clock import Clock
 from kivy.graphics import Rectangle, Color, RoundedRectangle
 from kivy.uix.popup import Popup
+from kivy.core.window import Window
 from classes.database import Database
 import datetime
 
@@ -17,16 +18,18 @@ class MainWindow(Screen):
 
         self.title = "Pendle Doors Clock-in System"
         self.database = Database()
+        self.padding_value = Window.width * 0.02
 
         # Set main layout of window
-        main_layout = BoxLayout(orientation="vertical", spacing=20)
+        main_layout = BoxLayout(orientation="vertical",
+                                spacing=self.padding_value)
         # Set background colour of window
         self.square_background(main_layout, (1, 1, 1, 1))
         main_layout.bind(size=self.update_container_bg,
                          pos=self.update_container_bg)
 
         second_layout = BoxLayout(
-            orientation="vertical", padding=25, spacing=20)
+            orientation="vertical", padding=self.padding_value, spacing=self.padding_value)
 
         # Add containers to main layout
         main_layout.add_widget(self.create_nav())
@@ -46,7 +49,7 @@ class MainWindow(Screen):
         container.bind(size=self.update_container_bg,
                        pos=self.update_container_bg)
         container.size_hint = (1, None)
-        container.height = 100
+        container.height = 80
 
         self.nav_spinner = Spinner(
             text="Menu", values=["Add Employee", "Employee List"]
@@ -59,6 +62,9 @@ class MainWindow(Screen):
     def create_details_container(self):
         # set container layout
         container = BoxLayout(orientation="vertical")
+        container.padding = self.padding_value
+        container.size_hint = (1, None)
+        container.height = 250
         # create rectangle for background colour
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
         # set rectangle size and position to window size / pos
@@ -67,6 +73,8 @@ class MainWindow(Screen):
         # Set details label text and create label
         details_text = "Company: Pendle Doors"
         self.details_label = Label(text=details_text, color=(0, 0, 0, 1))
+        self.details_label.padding = self.padding_value
+        self.details_label.size_hint = (1, 0.2)
         # add label to widget
         container.add_widget(self.details_label)
 
@@ -74,10 +82,10 @@ class MainWindow(Screen):
 
     def create_location_container(self):
         # create layout
-        container = BoxLayout(orientation="vertical", padding=50)
+        container = BoxLayout(orientation="vertical", padding=(50, 20, 50, 20))
         # set fixed height
         container.size_hint = (1, None)
-        container.height = 200
+        container.height = 150
         # create rectanle for background colour
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
         # set rectangle size and postition to window size / pos
@@ -85,6 +93,8 @@ class MainWindow(Screen):
                        pos=self.update_container_bg)
         # Create spinner (combobox) set values and defsutl value
         self.location_spinner = Spinner(values=["Mill Bank", "Moss Fold"])
+        self.location_spinner.size_hint = (1, None)
+        self.location_spinner.height = 60
         self.location_spinner.text = "Select a location"
         # add spinnder to layout
         container.add_widget(self.location_spinner)
@@ -93,7 +103,10 @@ class MainWindow(Screen):
 
     def create_button_container(self):
         # set container layout
-        container = BoxLayout(orientation="vertical", padding=50, spacing=20)
+        container = BoxLayout(orientation="vertical",
+                              padding=(50, 20, 50, 20), spacing=20)
+        container.size_hint = (1, None)
+        container.height = 350
         # add rectangle for background colour
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
         # set rectangle size and position to window size / pos
@@ -104,16 +117,20 @@ class MainWindow(Screen):
         id_input_label = Label(text="Enter employee ID to clock in.")
         id_input_label.color = (0, 0, 0, 1)
         self.id_input = TextInput()
+        self.id_input.size_hint = (1, None)
+        self.id_input.height = 60
         self.id_input.multiline = False
         self.id_input.halign = "center"
-        self.id_input.padding = (10, 10, 10, 10)
-        self.id_input.font_size = 40
+        self.id_input.padding = 17.5
+        self.id_input.font_size = 25
         # Create clock in / out buttons
-        clock_in_button = Button(text="Clock-in")
+        clock_in_button = Button(text="Clock-in", size_hint=(1, None))
+        clock_in_button.height = 60
         clock_in_button.background_normal = ""
         clock_in_button.background_color = (56 / 255, 161 / 255, 24 / 255)
         clock_in_button.on_press = self.clock_in
-        clock_out_button = Button(text="Clock-out")
+        clock_out_button = Button(text="Clock-out", size_hint=(1, None))
+        clock_out_button.height = 60
         clock_out_button.background_normal = ""
         clock_out_button.background_color = (158 / 255, 28 / 255, 25 / 255)
         clock_out_button.on_press = self.clock_out
