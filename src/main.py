@@ -10,7 +10,7 @@ from classes.add_employees import AddEmployees
 class ClockingApp(App):
     def build(self):
 
-        Window.size = (800, 1280)
+        Window.size = (800, 1020)
 
         self.title = "Clocking-in/out System"
 
