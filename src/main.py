@@ -33,4 +33,5 @@ if __name__ == "__main__":
 
 # todos
 
-# Create add employee window
+# error message if id not a number
+# fix layout & widget sizes for different size screens
