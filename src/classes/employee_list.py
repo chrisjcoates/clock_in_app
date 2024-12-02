@@ -97,7 +97,7 @@ class EmployeeListWindow(Screen):
         self.square_background(header_layout, (0.7, 0.7, 0.7, 0.7))
         header_layout.bind(size=self.layout_bg, pos=self.layout_bg)
         header_layout.size_hint = (1, None)
-        header_layout.height = 80
+        header_layout.height = 60
         container.add_widget(header_layout)
 
         headers = [
@@ -113,7 +113,7 @@ class EmployeeListWindow(Screen):
         header_layout.add_widget(id_label)
 
         for header in headers:
-            label = Label(text=header, size_hint=(1, None))
+            label = Label(text=header)
             label.color = (0, 0, 0, 1)
             header_layout.add_widget(label)
 
@@ -136,7 +136,7 @@ class EmployeeListWindow(Screen):
         for row in label_list:
             employee_layout = BoxLayout(orientation="horizontal", spacing=0)
             employee_layout.size_hint = (1, None)
-            employee_layout.height = 80
+            employee_layout.height = 60
             for label in row:
                 employee_layout.add_widget(label)
             container.add_widget(employee_layout)
