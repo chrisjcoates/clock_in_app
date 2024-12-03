@@ -197,7 +197,7 @@ class MainWindow(Screen):
             title="Message",
             content=popup_layout,
             size_hint=(None, None),
-            size=(500, 300),
+            size=(720, 300),
         )
         # open the popup object
         popup.open()
@@ -242,7 +242,7 @@ class MainWindow(Screen):
         # Create popup object
         popup = Popup(title="Message", content=popup_layout)
         popup.size_hint = (None, None)
-        popup.size = (500, 300)
+        popup.size = (720, 300)
 
         # bind the nested functions the the buttons
         button_yes.bind(on_press=on_yes)
