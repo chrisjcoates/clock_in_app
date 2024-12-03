@@ -17,8 +17,7 @@ class ClockingApp(App):
         screen_mananger.transition = NoTransition()
 
         screen_mananger.add_widget(MainWindow(name="main_window"))
-        screen_mananger.add_widget(
-            EmployeeListWindow(name="employee_list_window"))
+        screen_mananger.add_widget(EmployeeListWindow(name="employee_list_window"))
         screen_mananger.add_widget(AddEmployees(name="add_employees"))
 
         screen_mananger.current = "main_window"
@@ -33,5 +32,4 @@ if __name__ == "__main__":
 
 # todos
 
-# error message if id not a number
-# fix layout & widget sizes for different size screens
+# Add pass key requirement to create an employee
