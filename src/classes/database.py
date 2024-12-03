@@ -208,22 +208,21 @@ class Database:
         WHERE id = ?
         """
         try:
-            employee = self.cursor.execute(sql_query, (employee_id,))
+            self.cursor.execute(sql_query, (employee_id,))
+            employee = self.cursor.fetchone()
         except Exception as e:
             print("Failed to get employee details from db.", e)
 
         details = None
 
         try:
-            record = [row for row in employee]
-            if len(record) > 0:
-                record = record[0]
+            if len(employee) > 0:
 
                 details = {
-                    "ID": str(record[0]),
-                    "Name": record[1] + " " + record[2],
-                    "Location": record[3],
-                    "Clocked_in": record[7],
+                    "ID": str(employee[0]),
+                    "Name": employee[1] + " " + employee[2],
+                    "Location": employee[3],
+                    "Clocked_in": employee[7],
                 }
                 print("Sucessfully retrieved employee details from db.")
         except Exception as e:
@@ -235,4 +234,3 @@ class Database:
             print("No employee found with ID, employee details value is 'None'.")
 
         return details
-        
