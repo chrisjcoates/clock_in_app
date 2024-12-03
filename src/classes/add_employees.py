@@ -3,6 +3,7 @@ from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.popup import Popup
 from kivy.graphics import Rectangle, Color, RoundedRectangle
 from kivy.uix.spinner import Spinner
 from kivy.uix.gridlayout import GridLayout
@@ -21,11 +22,9 @@ class AddEmployees(Screen):
 
         main_layout = BoxLayout(orientation="vertical", spacing=0, padding=0)
         self.square_background(main_layout, (1, 1, 1, 1))
-        main_layout.bind(size=self.update_container_bg,
-                         pos=self.update_container_bg)
+        main_layout.bind(size=self.update_container_bg, pos=self.update_container_bg)
 
-        second_layout = BoxLayout(
-            orientation="vertical", spacing=20, padding=20)
+        second_layout = BoxLayout(orientation="vertical", spacing=20, padding=20)
 
         second_layout.add_widget(self.create_input_container())
 
@@ -45,10 +44,12 @@ class AddEmployees(Screen):
             if isinstance(f_name, str) and isinstance(l_name, str) and isinstance(dept, str):
                 self.database.create_employee(
                     f_name, l_name, dept, s_start, s_end)
+                self.pop_up_message("Employee created.")
                 self.clear_employee()
             else:
                 print("Employee details include invalid characters.")
         else:
+            self.pop_up_message("Please enter all employee detail fields.")
             print('Employee details missing')
 
     def clear_employee(self, instance=None):
@@ -78,13 +79,11 @@ class AddEmployees(Screen):
     def create_nav(self):
         container = BoxLayout(orientation="vertical")
         self.square_background(container, (0.129, 0.129, 0.129, 1))
-        container.bind(size=self.update_container_bg,
-                       pos=self.update_container_bg)
+        container.bind(size=self.update_container_bg, pos=self.update_container_bg)
         container.size_hint = (1, None)
         container.height = 80
 
-        nav_spinner = Spinner(text="Menu", values=[
-                              "Clock-in/out", "Employee List"])
+        nav_spinner = Spinner(text="Menu", values=["Clock-in/out", "Employee List"])
         nav_spinner.bind(text=self.switch_screen)
         container.add_widget(nav_spinner)
 
@@ -92,11 +91,9 @@ class AddEmployees(Screen):
 
     def create_input_container(self):
 
-        main_layout = BoxLayout(orientation="vertical",
-                                padding=self.padding_value, spacing=20)
+        main_layout = BoxLayout(orientation="vertical", padding=self.padding_value, spacing=20)
 
-        details_layout = GridLayout(
-            cols=2, padding=(20, 20, 50, 20), spacing=20)
+        details_layout = GridLayout(cols=2, padding=(20, 20, 50, 20), spacing=20)
         self.rounded_background(details_layout, (0.7, 0.7, 0.7, 0.7))
         details_layout.bind(size=self.update_container_bg,
                             pos=self.update_container_bg)
@@ -114,8 +111,7 @@ class AddEmployees(Screen):
         button_layout = BoxLayout(
             orientation="horizontal", padding=(50, 20, 50, 20), spacing=20)
         self.rounded_background(button_layout, (0.7, 0.7, 0.7, 0.7))
-        button_layout.bind(size=self.update_container_bg,
-                           pos=self.update_container_bg)
+        button_layout.bind(size=self.update_container_bg, pos=self.update_container_bg)
 
         button_layout.size_hint = (1, None)
         button_layout.height = 100
@@ -188,6 +184,32 @@ class AddEmployees(Screen):
         main_layout.add_widget(BoxLayout())
 
         return main_layout
+    
+    def pop_up_message(self, message):
+        """ Create a pop up box with meassage & timestamp if required """
+        # Create the layout
+        popup_layout = BoxLayout(orientation="vertical")
+
+        # Create lable with message text
+        message_label = Label(text=message)
+        # Create button to close popup
+        close_button = Button(text="Close")
+        # Add widgets to layout
+        popup_layout.add_widget(message_label)
+        popup_layout.add_widget(close_button)
+
+        # Create popup object
+        popup = Popup(
+            title="Message",
+            content=popup_layout,
+            size_hint=(None, None),
+            size=(720, 300),
+        )
+        # open the popup object
+        popup.open()
+        # close the popup on close button press
+        close_button.bind(on_press=popup.dismiss)
+
 
     def rounded_background(self, layout, colour):
         # using layot provided set colour and create rounded rectangle
