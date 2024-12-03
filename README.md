@@ -5,7 +5,8 @@ Employee Clock-in / Clock-out application
 
 ## Dependencys
 
-- Kivy
+- Python3.12
+- Kivy (only works with python3.12)
 
 ## To run
 - Run main.py to execute program
