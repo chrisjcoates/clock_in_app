@@ -198,7 +198,7 @@ class MainWindow(Screen):
         popup_layout.add_widget(self.pass_key_input)
         popup_layout.add_widget(button)
 
-        self.popup_pass_key = Popup(content=popup_layout, title=self.title, size_hint=(None,None))
+        self.popup_pass_key = Popup(content=popup_layout, title="Pass Key Check", size_hint=(None,None))
         self.popup_pass_key.size = (500, 400)
 
 
