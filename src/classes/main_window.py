@@ -163,15 +163,46 @@ class MainWindow(Screen):
         # get the text from the spinner
         original_text = text
 
+        # Checks if passkey is correct and switches screen if so
+        def pass_key_response(passkey):
+            if passkey == "1234":
+                self.manager.current = 'add_employees'
+            else:
+                self.pop_up_message("Incorrect pass key entered.")
+
         # switches the screen based on the text
         if original_text == "Employee List":
             self.manager.current = "employee_list_window"
 
         elif original_text == "Add Employee":
-            self.manager.current = 'add_employees'
+            # Opens popup and returns passkey to pass_key_response function
+            self.pass_key_popup(pass_key_response)
 
         # resets the nav text back to Menu
         self.reset_nav(instance, text)
+
+    def pass_key_popup(self, callback):
+
+        def on_submit(instance):
+            callback(self.pass_key_input.text)
+            self.popup_pass_key.dismiss()
+
+        popup_layout = BoxLayout(orientation="vertical", padding=5, spacing=10)
+
+        label = Label(text="Enter pass key")
+        self.pass_key_input = TextInput(multiline=False, halign="center")
+        button = Button(text="Submit")
+        button.bind(on_press=on_submit)
+
+        popup_layout.add_widget(label)
+        popup_layout.add_widget(self.pass_key_input)
+        popup_layout.add_widget(button)
+
+        self.popup_pass_key = Popup(content=popup_layout, title=self.title, size_hint=(None,None))
+        self.popup_pass_key.size = (500, 400)
+
+
+        self.popup_pass_key.open()
 
     def pop_up_message(self, message, time=None):
         """ Create a pop up box with meassage & timestamp if required """
@@ -273,8 +304,7 @@ class MainWindow(Screen):
             """Handles response to pop up yes or no button selection"""
             if response:  # if response is true
                 # Clock in user
-                self.database.clock_in(
-                    self.location_spinner.text, employee["ID"])
+                self.database.clock_in(self.location_spinner.text, employee["ID"])
                 # Set clock in message
                 message = f"{employee['Name']} has just clocked in at {self.location_spinner.text}"
                 self.id_input.text = ""  # Clear id input
