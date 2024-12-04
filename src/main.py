@@ -32,4 +32,5 @@ if __name__ == "__main__":
 
 # todos
 
-# Add pass key requirement to create an employee
+# Edit employee
+# Delete employee

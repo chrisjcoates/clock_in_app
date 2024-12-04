@@ -4,6 +4,8 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.spinner import Spinner
 from kivy.uix.screenmanager import Screen
+from kivy.uix.popup import Popup
+from kivy.uix.textinput import TextInput
 from kivy.graphics import Rectangle, Color
 from classes.database import Database
 
@@ -50,14 +52,76 @@ class EmployeeListWindow(Screen):
         # Spinner text passed into function
         original_text = text
 
+        # Checks if passkey is correct and switches screen if so
+        def pass_key_response(passkey):
+            if passkey == "1234":
+                self.manager.current = 'add_employees'
+            else:
+                self.pop_up_message("Incorrect pass key entered.")
+
         # Switch screen based on text value
         if original_text == "Add Employee":
-            self.manager.current = "add_employees"
+            # Opens popup and returns passkey to pass_key_response function
+            self.pass_key_popup(pass_key_response)
         elif original_text == "Clock-in/out":
             self.manager.current = "main_window"
 
         # Reset the nav bar text
         self.reset_nav(instance, text)
+
+    def pass_key_popup(self, callback):
+
+        def on_submit(instance):
+            callback(self.pass_key_input.text)
+            self.popup_pass_key.dismiss()
+
+        popup_layout = BoxLayout(orientation="vertical", padding=5, spacing=10)
+
+        label = Label(text="Enter pass key")
+        self.pass_key_input = TextInput(multiline=False, halign="center")
+        button = Button(text="Submit")
+        button.bind(on_press=on_submit)
+
+        popup_layout.add_widget(label)
+        popup_layout.add_widget(self.pass_key_input)
+        popup_layout.add_widget(button)
+
+        self.popup_pass_key = Popup(content=popup_layout, title="Pass Key Check", size_hint=(None,None))
+        self.popup_pass_key.size = (500, 400)
+
+
+        self.popup_pass_key.open()
+
+    def pop_up_message(self, message, time=None):
+        """ Create a pop up box with meassage & timestamp if required """
+        # Create the layout
+        popup_layout = BoxLayout(orientation="vertical")
+
+        # Alter message if timestamp has been passed into the function
+        if time:
+            message = f"{message} at {time}"
+        else:
+            message = message
+
+        # Create lable with message text
+        message_label = Label(text=message)
+        # Create button to close popup
+        close_button = Button(text="Close")
+        # Add widgets to layout
+        popup_layout.add_widget(message_label)
+        popup_layout.add_widget(close_button)
+
+        # Create popup object
+        popup = Popup(
+            title="Message",
+            content=popup_layout,
+            size_hint=(None, None),
+            size=(720, 300),
+        )
+        # open the popup object
+        popup.open()
+        # close the popup on close button press
+        close_button.bind(on_press=popup.dismiss)
 
     def create_nav(self):
         """ Create navigation layout and add dropdown widget for selection """
