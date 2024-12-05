@@ -1,5 +1,6 @@
 import sqlite3
 import os
+import datetime
 
 
 class Database:
@@ -116,10 +117,13 @@ class Database:
         if not self.check_clocked_in(employee_id):
             self.connect_to_db()
 
-            sql_query = """
+            time_str = str(datetime.datetime.now().replace(microsecond=0))
+
+            sql_query = f"""
             UPDATE employees
             SET clocked_in = 'True',
-                location = ?
+                location = ?,
+                timestamp = '{time_str:00}'
             WHERE id = ?
             """
 
@@ -140,7 +144,8 @@ class Database:
             sql_query = """
             UPDATE employees
             SET clocked_in = 'False',
-                location = ''
+                location = '',
+                timestamp = ''
             WHERE id = ?
             """
 
@@ -163,6 +168,7 @@ class Database:
         sql_query = """
         SELECT * FROM employees
         """
+
         try:
             self.cursor.execute(sql_query)
             data = self.cursor.fetchall()
