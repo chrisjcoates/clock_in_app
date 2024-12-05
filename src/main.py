@@ -31,6 +31,3 @@ if __name__ == "__main__":
 
 
 # todos
-
-# Edit employee
-# Delete employee
