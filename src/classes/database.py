@@ -6,13 +6,16 @@ import datetime
 class Database:
     def __init__(self):
 
+        # Set the db file location
         self.database_file = "data/employees.db"
+
         self.conn = None
         self.cursor = None
 
     def connect_to_db(self):
-
+        # Check if the file exists
         if not os.path.exists(self.database_file):
+            # If not create the db file and table
             try:
                 conn = sqlite3.connect(self.database_file)
                 cursor = conn.cursor()
@@ -39,10 +42,11 @@ class Database:
                 print("Sucessfully created and connected to database.")
             except Exception as e:
                 print("Error connecting to database.", e)
-
+        # If the file exists aptempt to connect to the db
         if os.path.exists(self.database_file):
 
             try:
+                # set the connection and the cursor as variables
                 self.conn = sqlite3.connect(self.database_file)
                 self.cursor = self.conn.cursor()
 
@@ -52,6 +56,7 @@ class Database:
                 print("Error connecting to database.", e)
 
     def close_db_connection(self):
+        # if the cursor and connection are live close them
         try:
             if self.cursor:
                 self.cursor.close()
@@ -63,9 +68,10 @@ class Database:
             print("Error closing connectin to database.", e)
 
     def get_all_records(self, filter=None):
-
+        # conencto to db
         self.connect_to_db()
 
+        # set sql query based on function arg
         if filter == "all":
             sql_query = """
             SELECT * FROM employees
@@ -80,17 +86,17 @@ class Database:
             SELECT * FROM employees
             WHERE clocked_in = 'False'
             """
-
+        # execute the sql query
         self.cursor.execute(sql_query)
-
+        # set the data retreived to the variable data
         data = self.cursor.fetchall()
-
+        # close the bd conection
         self.close_db_connection()
 
         return data
 
     def check_clocked_in(self, employee_id):
-
+        # Connect to db
         self.connect_to_db()
 
         sql_query = """
@@ -100,9 +106,10 @@ class Database:
         """
 
         try:
+            # try to execute the sql query passings the employee id as an arg
             self.cursor.execute(sql_query, (employee_id,))
             field = self.cursor.fetchone()
-
+            # based on if the employee is clocked in or our set the value of clocked_in
             if field[0] == "True":
                 clocked_in = True
                 print("Employee is clocked in.")
@@ -114,9 +121,10 @@ class Database:
         return clocked_in
 
     def clock_in(self, location, employee_id):
+        # check if the employee is not clocked in already
         if not self.check_clocked_in(employee_id):
             self.connect_to_db()
-
+            # set current time for time stamp
             time_str = str(datetime.datetime.now().replace(microsecond=0))
 
             sql_query = f"""
@@ -128,6 +136,7 @@ class Database:
             """
 
             try:
+                # execute the query, passing the location and employee id as args
                 self.cursor.execute(sql_query, (location, employee_id))
                 self.conn.commit()
 
@@ -160,9 +169,9 @@ class Database:
                 print("Error updating record.", e)
 
     def count_employess_on_site(self):
-
+        # create a dictionary of sites for employee count
         employees_onsite = {"Mill Bank": 0, "Moss Fold": 0}
-
+        # connect to the database
         self.connect_to_db()
 
         sql_query = """
@@ -170,11 +179,14 @@ class Database:
         """
 
         try:
+            # execute the sql query
             self.cursor.execute(sql_query)
+            # set the retreived information to the data variable
             data = self.cursor.fetchall()
-
+            # clise the connection
             self.close_db_connection()
 
+            # Loop thought the data and increase the employee count based on location
             for row in data:
                 if row[3] == "Mill Bank":
                     employees_onsite["Mill Bank"] += 1
@@ -188,7 +200,7 @@ class Database:
         return employees_onsite
 
     def create_employee(self, f_name, l_name, dept, s_start, s_end):
-
+        # Connecto to db
         self.connect_to_db()
 
         sql_query = """
@@ -196,8 +208,9 @@ class Database:
         VALUES (?, ?, ?, ?, ?, '', '', 'False')
         """
         try:
-            self.cursor.execute(
-                sql_query, (f_name, l_name, dept, s_start, s_end))
+            # Execute query, taking employee details as args
+            self.cursor.execute(sql_query, (f_name, l_name, dept, s_start, s_end))
+            # commit the insert
             self.conn.commit()
         except Exception as e:
             print("Error inserting employee into table.", e)
@@ -205,7 +218,7 @@ class Database:
         self.close_db_connection()
 
     def employee_details(self, employee_id):
-
+        # connected to db
         self.connect_to_db()
 
         sql_query = """
@@ -214,6 +227,7 @@ class Database:
         WHERE id = ?
         """
         try:
+            # execute the sql statement, passing employee id
             self.cursor.execute(sql_query, (employee_id,))
             employee = self.cursor.fetchone()
         except Exception as e:
@@ -222,8 +236,9 @@ class Database:
         details = None
 
         try:
+            # if employee record found
             if len(employee) > 0:
-
+                # create a dictionary for that employee
                 details = {
                     "ID": str(employee[0]),
                     "Name": employee[1] + " " + employee[2],
@@ -233,7 +248,7 @@ class Database:
                 print("Sucessfully retrieved employee details from db.")
         except Exception as e:
             print(e)
-
+        # Close the db
         self.close_db_connection()
 
         if not details:
