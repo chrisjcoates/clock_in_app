@@ -12,3 +12,5 @@ Employee Clock-in / Clock-out application
 - Create a virtual environment with python 3.12 'python3.12 -m venv venv'
 - Install Kivy 'pip install kivy'
 - Run main.py to execute program
+
+- Passcode for creating employees is 1234
