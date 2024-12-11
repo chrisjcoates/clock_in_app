@@ -33,7 +33,11 @@ class MainWindow(Screen):
         main_layout.add_widget(self.create_nav())
         main_layout.add_widget(second_layout)
         second_layout.add_widget(self.create_details_container())
+
+        # Count number of employees and set the number in the details container
         self.employees_on_site()
+
+        # Continue adding containers to layout
         second_layout.add_widget(self.create_location_container())
         second_layout.add_widget(BoxLayout(size_hint=(1, None), height=50))
         second_layout.add_widget(self.create_button_container())
@@ -82,7 +86,7 @@ class MainWindow(Screen):
         container = BoxLayout(orientation="vertical", padding=(50, 20, 50, 20))
         # set fixed height
         container.size_hint = (1, None)
-        container.height = 150
+        container.height = 100
         # create rectanle for background colour
         self.rounded_background(container, (0.7, 0.7, 0.7, 0.7))
         # set rectangle size and postition to window size / pos
