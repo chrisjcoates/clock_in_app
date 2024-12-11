@@ -139,6 +139,7 @@ class MainWindow(Screen):
         return container
 
     def create_message_container(self):
+        """ Creates a layout and adds widgets for the message container """
         # set container layout
         container = BoxLayout(orientation="vertical")
         # add rectangle for background colour
@@ -182,26 +183,32 @@ class MainWindow(Screen):
         self.reset_nav(instance, text)
 
     def pass_key_popup(self, callback):
+        """Creates a popup box asking the user to input a passkey"""
 
+        # C
         def on_submit(instance):
             callback(self.pass_key_input.text)
             self.popup_pass_key.dismiss()
 
+        # Create a vertical layout for the popup content
         popup_layout = BoxLayout(orientation="vertical", padding=5, spacing=10)
-
         label = Label(text="Enter pass key")
+        # Create a text input field for the passkey
         self.pass_key_input = TextInput(multiline=False, halign="center")
+        # Create a submit button and binds the on_submit function to button click
         button = Button(text="Submit")
         button.bind(on_press=on_submit)
 
+        # Add the label, text input, and button to the layou
         popup_layout.add_widget(label)
         popup_layout.add_widget(self.pass_key_input)
         popup_layout.add_widget(button)
 
+        # Create the popup object
         self.popup_pass_key = Popup(content=popup_layout, title="Pass Key Check", size_hint=(None,None))
         self.popup_pass_key.size = (500, 400)
 
-
+        # Open the popup
         self.popup_pass_key.open()
 
     def pop_up_message(self, message, time=None):
