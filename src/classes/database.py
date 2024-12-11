@@ -21,6 +21,7 @@ class Database:
                 conn = sqlite3.connect(self.database_file)
                 cursor = conn.cursor()
 
+                # SQL query to cerate a the database table
                 sql_query = """
                 CREATE TABLE IF NOT EXISTS employees (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -34,9 +35,12 @@ class Database:
                 timestamp TEXT
                 )
                 """
+
+                # execute and commit
                 cursor.execute(sql_query)
                 conn.commit()
 
+                # Close the connection
                 cursor.close()
                 conn.close()
 
