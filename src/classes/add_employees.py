@@ -34,21 +34,31 @@ class AddEmployees(Screen):
         self.add_widget(main_layout)
 
     def create_employee(self, instance):
+        """Get the values from the input fields, and pass them into the database method
+        to create a new employee record"""
+        # Get the form values as set them to varirables capitalized
         f_name = self.f_name_input.text.capitalize()
         l_name = self.l_name_input.text.capitalize()
         dept = self.dept_spinner.text.capitalize()
         s_start = f"{self.s_hours_spinner.text}:{self.s_mins_spinner.text}"
         s_end = f"{self.e_hours_spinner.text}:{self.e_mins_spinner.text}"
 
+        # Check is first name, last name, and dept have values
         if f_name and l_name and dept:
+            # Validate if the values are strings
             if isinstance(f_name, str) and isinstance(l_name, str) and isinstance(dept, str):
-                self.database.create_employee(
-                    f_name, l_name, dept, s_start, s_end)
+                # Create the employee
+                self.database.create_employee(f_name, l_name, dept, s_start, s_end)
+                # Display a popup message
                 self.pop_up_message("Employee created.")
+                # clear the input fields
                 self.clear_employee()
             else:
                 print("Employee details include invalid characters.")
+                # Show a popup message to tell the user invalid characters input
+                self.pop_up_message("Employee details include invalid characters.")
         else:
+            # Show popup message to warn fields have not been input
             self.pop_up_message("Please enter all employee detail fields.")
             print('Employee details missing')
 

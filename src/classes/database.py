@@ -200,6 +200,8 @@ class Database:
         return employees_onsite
 
     def create_employee(self, f_name, l_name, dept, s_start, s_end):
+        """Connects to the database, takes employee details as args and inserts a new employee record 
+        into the data"""
         # Connecto to db
         self.connect_to_db()
 
@@ -207,6 +209,7 @@ class Database:
         INSERT INTO employees (first_name, last_name, department, shift_start, shift_end, location, timestamp, clocked_in)
         VALUES (?, ?, ?, ?, ?, '', '', 'False')
         """
+
         try:
             # Execute query, taking employee details as args
             self.cursor.execute(sql_query, (f_name, l_name, dept, s_start, s_end))
@@ -214,13 +217,13 @@ class Database:
             self.conn.commit()
         except Exception as e:
             print("Error inserting employee into table.", e)
-
+        # Close the database connection
         self.close_db_connection()
 
     def employee_details(self, employee_id):
         # connected to db
         self.connect_to_db()
-
+    
         sql_query = """
         SELECT *
         FROM employees
