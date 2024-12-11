@@ -15,19 +15,24 @@ class AddEmployees(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        # Set the padding value
         self.padding_value = Window.width * 0.02
 
+        # Set the window title
         self.title = "Add Employees"
+        # add the database object
         self.database = Database()
 
+        # create the main layout
         main_layout = BoxLayout(orientation="vertical", spacing=0, padding=0)
         self.square_background(main_layout, (1, 1, 1, 1))
         main_layout.bind(size=self.update_container_bg, pos=self.update_container_bg)
-
+        
+        # Create the second layout
         second_layout = BoxLayout(orientation="vertical", spacing=20, padding=20)
 
+        # add widgets to layout
         second_layout.add_widget(self.create_input_container())
-
         main_layout.add_widget(self.create_nav())
         main_layout.add_widget(second_layout)
 

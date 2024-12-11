@@ -13,6 +13,7 @@ class Database:
         self.cursor = None
 
     def connect_to_db(self):
+        """Connects to the database and sets the conn, and cursor objects"""
         # Check if the file exists
         if not os.path.exists(self.database_file):
             # If not create the db file and table
@@ -56,6 +57,7 @@ class Database:
                 print("Error connecting to database.", e)
 
     def close_db_connection(self):
+        """Close the database connection"""
         # if the cursor and connection are live close them
         try:
             if self.cursor:
@@ -68,6 +70,8 @@ class Database:
             print("Error closing connectin to database.", e)
 
     def get_all_records(self, filter=None):
+        """Executes and sql query based on the the filter passes intot he method
+        and returns the data"""
         # conencto to db
         self.connect_to_db()
 
@@ -96,6 +100,7 @@ class Database:
         return data
 
     def check_clocked_in(self, employee_id):
+        """Checks if an employee is already clocked in and returns a boolean value"""
         # Connect to db
         self.connect_to_db()
 
@@ -121,6 +126,7 @@ class Database:
         return clocked_in
 
     def clock_in(self, location, employee_id):
+        """Clocks the employee in, and updates the employee records clocked_in field in the database to True"""
         # check if the employee is not clocked in already
         if not self.check_clocked_in(employee_id):
             self.connect_to_db()
@@ -147,6 +153,7 @@ class Database:
                 print("Error updating record.", e)
 
     def clock_out(self, employee_id):
+        """Clocks the employee out, and updates the employee records clocked_out field in the database to True"""
         if self.check_clocked_in(employee_id):
             self.connect_to_db()
 
@@ -169,6 +176,7 @@ class Database:
                 print("Error updating record.", e)
 
     def count_employess_on_site(self):
+        """counts the employes clocked in at each location and returns a dictionary"""
         # create a dictionary of sites for employee count
         employees_onsite = {"Mill Bank": 0, "Moss Fold": 0}
         # connect to the database
@@ -223,7 +231,7 @@ class Database:
     def employee_details(self, employee_id):
         # connected to db
         self.connect_to_db()
-    
+
         sql_query = """
         SELECT *
         FROM employees

@@ -70,22 +70,29 @@ class EmployeeListWindow(Screen):
         self.reset_nav(instance, text)
 
     def pass_key_popup(self, callback):
-
+        """Creates a popup box asking the user to input a passkey"""
         def on_submit(instance):
+            # Pass the input text to the callback function
             callback(self.pass_key_input.text)
+            # Close the popup
             self.popup_pass_key.dismiss()
 
+        # Create a vertical layout for the popup content
         popup_layout = BoxLayout(orientation="vertical", padding=5, spacing=10)
-
         label = Label(text="Enter pass key")
+
+        # Create a text input field for the passkey
         self.pass_key_input = TextInput(multiline=False, halign="center")
+        # Create a submit button and binds the on_submit function to button click
         button = Button(text="Submit")
         button.bind(on_press=on_submit)
 
+        # Create a submit button and binds the on_submit function to button click
         popup_layout.add_widget(label)
         popup_layout.add_widget(self.pass_key_input)
         popup_layout.add_widget(button)
 
+        # Create a popup object
         self.popup_pass_key = Popup(content=popup_layout, title="Pass Key Check", size_hint=(None,None))
         self.popup_pass_key.size = (500, 400)
 

@@ -185,9 +185,11 @@ class MainWindow(Screen):
     def pass_key_popup(self, callback):
         """Creates a popup box asking the user to input a passkey"""
 
-        # C
+        # Nested function to handle the submit action
         def on_submit(instance):
+            # Pass the input text to the callback function
             callback(self.pass_key_input.text)
+            # Close the popup
             self.popup_pass_key.dismiss()
 
         # Create a vertical layout for the popup content
